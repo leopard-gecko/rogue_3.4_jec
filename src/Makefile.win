@@ -1,0 +1,124 @@
+# Rogue 3.4 JEC: Windows VT / Unicode / file I/O / distribution (MSYS2 UCRT64).
+# Invoke through "make" (auto-selected by the parent Makefile).
+# Requires mingw-w64-ucrt-x86_64-gcc and PDCursesMod VT backend.
+# Includes wizard authentication, direct-launch resume, terminal cursor
+# restoration and two-variant binary ZIP distribution.
+CC = gcc
+MINGW_PREFIX ?= /ucrt64
+PROG ?= rogue
+ifneq ($(strip $(PROGRAM)),)
+ifneq ($(origin PROG),command line)
+override PROG := $(PROGRAM)
+endif
+endif
+FILEDIR ?=
+SAVEFILE ?= $(PROG).save
+SCOREFILE ?= $(PROG).scr
+SAVEDIR ?= $(if $(strip $(FILEDIR)),$(FILEDIR),.)
+SCOREDIR ?= $(if $(strip $(FILEDIR)),$(FILEDIR),.)
+DEFAULT_LANGUAGE ?= 0
+CFLAGS ?= -O2
+PORT_CFLAGS = -std=c11 -Wall -Wextra -Wpedantic
+CPPFLAGS ?=
+LDFLAGS ?=
+# PDCursesMod's UTF-8-aware VT backend, like Rogue 3.6 JEC.
+PLATFORM_CPPFLAGS = -I. -D_DEFAULT_SOURCE -DPDC_WIDE=1 -DPDC_FORCE_UTF8=1 \
+                    -I$(MINGW_PREFIX)/include/pdcurses
+windows_shell_quote = '$(subst ','"'"',$(1))'
+BUILD_CPPFLAGS = $(PLATFORM_CPPFLAGS) -DDEFAULT_LANGUAGE=$(DEFAULT_LANGUAGE) \
+  $(call windows_shell_quote,-DROGUE_SAVEFILE="$(SAVEFILE)") \
+  $(call windows_shell_quote,-DROGUE_SAVEDIR="$(SAVEDIR)") \
+  $(call windows_shell_quote,-DROGUE_SCOREFILE="$(SCOREFILE)") \
+  $(call windows_shell_quote,-DROGUE_SCOREDIR="$(SCOREDIR)")
+LDLIBS ?= -lpdcurses_vt -lwinmm -luser32 -lgdi32 -lcomdlg32 -lshell32 -ladvapi32
+
+GAME_SRCS = vers.c main.c rooms.c passages.c command.c move.c fight.c chase.c \
+       init.c things.c potions.c wizard.c list.c io.c rip.c daemon.c daemons.c \
+       weapons.c monsters.c save.c options.c armor.c globals.c compat.c \
+       jec/language.c jec/unicode_text.c jec/game_text.c
+SRCS = $(GAME_SRCS) windows/rogue_windows.c windows/rogue_windows_console.c windows/unicode_output.c windows/rogue_windows_files.c windows/xcrypt.c
+OBJS = $(SRCS:.c=.win.o)
+
+.PHONY: all clean original english japanese dist.win FORCE_WINDOWS_OPTIONS
+all: $(PROG).exe
+$(PROG).exe: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+# Keep compiler options in the stamp so changing PROGRAM, save/score name,
+# directories or default language triggers a complete recompile.
+FORCE_WINDOWS_OPTIONS:
+# Minimal MSYS2 may not ship cmp (diffutils); use cat (coreutils, already
+# required for rm/mv) with the POSIX shell test to compare text stamps.
+.windows-build-options: FORCE_WINDOWS_OPTIONS
+	@printf '%s\n' \
+	  $(call windows_shell_quote,CC=$(CC)) \
+	  $(call windows_shell_quote,CPPFLAGS=$(CPPFLAGS) $(BUILD_CPPFLAGS)) \
+	  $(call windows_shell_quote,CFLAGS=$(CFLAGS) $(PORT_CFLAGS)) \
+	  $(call windows_shell_quote,LDFLAGS=$(LDFLAGS)) \
+	  $(call windows_shell_quote,LDLIBS=$(LDLIBS)) > $@.tmp
+	@if test -f $@ && test "$$(cat $@.tmp)" = "$$(cat $@)"; then rm -f $@.tmp; else mv $@.tmp $@; fi
+$(OBJS): .windows-build-options rogue.h windows/rogue_windows.h windows/rogue_windows_console.h windows/rogue_windows_files.h jec/language.h jec/unicode_text.h jec/game_text.h jec/unicode_output.h
+%.win.o: %.c
+	$(CC) $(CPPFLAGS) $(BUILD_CPPFLAGS) $(CFLAGS) $(PORT_CFLAGS) -c -o $@ $<
+
+clean:
+	rm -f $(OBJS) $(PROG).exe rogue.exe .windows-build-options .windows-build-options.tmp
+original english:
+	$(MAKE) -f Makefile.win all PROG="$(PROG)" SAVEFILE="$(SAVEFILE)" \
+	  SCOREFILE="$(SCOREFILE)" SAVEDIR="$(SAVEDIR)" SCOREDIR="$(SCOREDIR)" \
+	  DEFAULT_LANGUAGE=2
+japanese:
+	$(MAKE) -f Makefile.win all PROG="$(PROG)" SAVEFILE="$(SAVEFILE)" \
+	  SCOREFILE="$(SCOREFILE)" SAVEDIR="$(SAVEDIR)" SCOREDIR="$(SCOREDIR)" \
+	  DEFAULT_LANGUAGE=1
+
+# Stage 6-B: portable Windows distribution.  Both EXEs deliberately use the
+# SAME default save/score filenames; only the startup language differs.
+# Use the normal object-option stamp to rebuild for each language, and build
+# the default (auto-language) variant last so src/rogue34.exe remains normal.
+# A temporary staging directory is discarded even on interrupted builds.
+# Refuse the archive if it needs any non-Windows runtime DLL; in particular,
+# PDCursesMod VT must link from the supplied static libpdcurses_vt.a.
+DIST_WIN_ARCHIVE = rogue34_jec_windows.zip
+DIST_WIN_FOLDER = Rogue 3.4
+
+dist.win:
+	@set -eu; \
+	  command -v zip >/dev/null 2>&1 || { echo 'Missing zip: pacman -S zip' >&2; exit 1; }; \
+	  command -v objdump >/dev/null 2>&1 || { echo 'Missing objdump: install mingw-w64-ucrt-x86_64-binutils' >&2; exit 1; }; \
+	  stage=$$(mktemp -d .rogue34-dist.XXXXXX); \
+	  archive="$(CURDIR)/$(DIST_WIN_ARCHIVE)"; \
+	  archive_tmp="$(CURDIR)/rogue34_jec_windows.tmp.zip"; \
+	  trap 'rm -rf "$$stage"; rm -f "$$archive_tmp"' 0; \
+	  trap 'exit 1' 1 2 3 15; \
+	  mkdir -p "$$stage/$(DIST_WIN_FOLDER)"; \
+	  $(MAKE) -f Makefile.win PROG=rogue34 SAVEFILE=rogue34.save \
+	    SCOREFILE=rogue34.scr FILEDIR= SAVEDIR=. SCOREDIR=. \
+	    DEFAULT_LANGUAGE=2 all; \
+	  cp rogue34.exe "$$stage/$(DIST_WIN_FOLDER)/rogue34_original.exe"; \
+	  $(MAKE) -f Makefile.win PROG=rogue34 SAVEFILE=rogue34.save \
+	    SCOREFILE=rogue34.scr FILEDIR= SAVEDIR=. SCOREDIR=. \
+	    DEFAULT_LANGUAGE=0 all; \
+	  cp rogue34.exe "$$stage/$(DIST_WIN_FOLDER)/rogue34.exe"; \
+	  for exe in "$$stage/$(DIST_WIN_FOLDER)/rogue34_original.exe" \
+	             "$$stage/$(DIST_WIN_FOLDER)/rogue34.exe"; do \
+	    objdump -p "$$exe" > "$$stage/.imports"; \
+	    dlls=$$(sed -n 's/^[[:space:]]*DLL Name:[[:space:]]*//p' "$$stage/.imports"); \
+	    if test -z "$$dlls"; then \
+	      echo "Cannot read PE DLL imports: $$exe" >&2; exit 1; \
+	    fi; \
+	    printf '%s\n' "$$dlls" | while IFS= read -r dll; do \
+	      lower=$$(printf '%s' "$$dll" | tr '[:upper:]' '[:lower:]'); \
+	      case "$$lower" in \
+	        advapi32.dll|bcrypt.dll|comctl32.dll|comdlg32.dll|crypt32.dll|dwmapi.dll|gdi32.dll|imm32.dll|kernel32.dll|kernelbase.dll|msvcrt.dll|ntdll.dll|ole32.dll|oleaut32.dll|psapi.dll|rpcrt4.dll|secur32.dll|shell32.dll|shlwapi.dll|ucrtbase.dll|user32.dll|version.dll|winmm.dll|ws2_32.dll|api-ms-win-*.dll|ext-ms-*.dll) ;; \
+	        *) echo "Non-system or unrecognized DLL required by $$exe: $$dll" >&2; exit 1 ;; \
+	      esac; \
+	    done; \
+	  done; \
+	  cp windows/binary/README_ja.txt "$$stage/$(DIST_WIN_FOLDER)/"; \
+	  cp windows/binary/README_en.txt "$$stage/$(DIST_WIN_FOLDER)/"; \
+	  cp ../LICENSE "$$stage/$(DIST_WIN_FOLDER)/LICENSE.txt"; \
+	  rm -f "$$stage/.imports" "$$archive_tmp"; \
+	  (cd "$$stage" && zip -q -r "$$archive_tmp" '$(DIST_WIN_FOLDER)'); \
+	  mv -f "$$archive_tmp" "$$archive"; \
+	  echo "Created $(DIST_WIN_ARCHIVE) (Rogue 3.4/; both executables, two READMEs, LICENSE)."

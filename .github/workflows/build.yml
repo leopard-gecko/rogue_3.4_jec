@@ -1,0 +1,237 @@
+# Build-only workflow. Development-stage regression scripts are not part of
+# the source distribution; the normal Makefile is the verification target.
+name: Build Rogue 3.4
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: macos-arm64
+            runner: macos-15
+          - target: macos-x86_64
+            runner: macos-15-intel
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install Linux development libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential libncurses-dev libcrypt-dev
+
+      - name: Build
+        working-directory: src
+        run: |
+          make clean
+          make
+
+      - name: Package executable and documentation
+        run: |
+          mkdir -p dist
+          cp src/rogue dist/rogue
+          cp README.md LICENSE dist/
+          tar -czf "rogue34-${{ matrix.target }}.tar.gz" -C dist .
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: rogue34-${{ matrix.target }}
+          path: rogue34-${{ matrix.target }}.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-stage6c:
+    # Retain stage 6-A score/configuration checks and add stage 6-C
+    # distribution creation, archive inspection and extracted EXE smoke tests.
+    # Interactive Windows Terminal/Console Host checks remain a field test.
+    name: windows-ucrt64-stage6c-distribution
+    runs-on: windows-2025
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Configure Git line endings
+        shell: pwsh
+        run: git config --global core.autocrlf input
+
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install MSYS2 UCRT64 build environment
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            make
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-binutils
+            mingw-w64-ucrt-x86_64-pdcurses
+            diffutils
+            zip
+            unzip
+
+      - name: Verify static PDCurses VT library
+        run: test -s /ucrt64/lib/libpdcurses_vt.a
+
+      - name: Compile and link Windows stage 6-A
+        working-directory: src
+        run: |
+          make PROGRAM=rogue34
+          test -f rogue34.exe
+          objdump -p rogue34.exe | grep 'DLL Name:' || true
+
+      - name: Smoke check score-file read-only behavior
+        working-directory: src
+        run: |
+          mkdir -p stage4-check
+          cd stage4-check
+          ../rogue34.exe -s > missing.out
+          test ! -e rogue34.scr
+          test ! -s missing.out
+          printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > rogue34.scr
+          ../rogue34.exe -s > existing.out
+          grep 'Tester' existing.out
+          # UTF-8 name encoded as hex in the platform-neutral score format.
+          printf 'ROGUE34-SCORES-1\n100 1 2 0 e5a4aae9838ef09f8d8e\n' > rogue34.scr
+          ../rogue34.exe -s > utf8.out
+          grep -F '太郎🍎' utf8.out
+          cp rogue34.scr before.scr
+          ../rogue34.exe -s > /dev/null
+          cmp before.scr rogue34.scr
+          printf 'invalid\n' > rogue34.scr
+          if ../rogue34.exe -s; then echo 'invalid score accepted' >&2; exit 1; fi
+          test "$(cat rogue34.scr)" = 'invalid'
+          printf 'invalid-save' > '破損🍎.save'
+          if ../rogue34.exe '破損🍎.save'; then echo 'invalid save accepted' >&2; exit 1; fi
+          test -f '破損🍎.save'
+
+      - name: Verify PROGRAM alias, original and Japanese builds, configured score names
+        working-directory: src
+        run: |
+          # Keep binary option tests separate from the default-score smoke above.
+          make PROGRAM=rogueqa original SAVEFILE=qa_save.save SCOREFILE=qa_score.scr FILEDIR=.
+          test -f rogueqa.exe
+          mkdir -p stage6a-options
+          cd stage6a-options
+          printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > qa_score.scr
+          ../rogueqa.exe -s > original.out
+          grep -F 'Top Ten Adventurers' original.out
+          grep -F Tester original.out
+          test ! -e rogue.scr
+          cd ..
+          make PROGRAM=rogueqa japanese SAVEFILE=qa_save.save SCOREFILE=qa_score.scr FILEDIR=.
+          cd stage6a-options
+          ../rogueqa.exe -s > japanese.out
+          grep -F 'トップ10の冒険者' japanese.out
+          grep -F Tester japanese.out
+          test ! -e rogue.scr
+          cd ..
+          # Altering the target names rebuilds the embedded path settings.
+          make PROGRAM=rogueqa SAVEFILE=qa_new.save SCOREFILE=qa_new.scr FILEDIR=.
+          cd stage6a-options
+          cp qa_score.scr qa_new.scr
+          ../rogueqa.exe -s > renamed.out
+          grep -F Tester renamed.out
+          test ! -e rogue.scr
+
+      - name: Create Windows distribution ZIP
+        working-directory: src
+        run: |
+          make dist.win
+          test -s rogue34_jec_windows.zip
+
+      - name: Validate ZIP members and embedded Windows executables
+        working-directory: src
+        run: |
+          archive=rogue34_jec_windows.zip
+          unzip -tq "$archive"
+          # One directory plus exactly five files; no accidental build output.
+          count="$(unzip -Z1 "$archive" | wc -l | tr -d '[:space:]')"
+          test "$count" -eq 6
+          for member in \
+            'Rogue 3.4/' \
+            'Rogue 3.4/rogue34.exe' \
+            'Rogue 3.4/rogue34_original.exe' \
+            'Rogue 3.4/README_ja.txt' \
+            'Rogue 3.4/README_en.txt' \
+            'Rogue 3.4/LICENSE.txt'; do
+            unzip -Z1 "$archive" | grep -Fx -- "$member" > /dev/null
+          done
+          mkdir -p stage6c-check
+          unzip -q "$archive" -d stage6c-check
+          for exe in \
+            'stage6c-check/Rogue 3.4/rogue34.exe' \
+            'stage6c-check/Rogue 3.4/rogue34_original.exe'; do
+            test -s "$exe"
+            objdump -f "$exe" | grep -F 'pei-x86-64'
+            # These must not require external MSYS2/PDCurses runtime DLLs.
+            if objdump -p "$exe" | grep -Ei \
+              'DLL Name:.*(pdcurses|msys-|libgcc|libwinpthread|libstdc)'; then
+              echo "Unexpected runtime import: $exe" >&2
+              exit 1
+            fi
+          done
+          test -s 'stage6c-check/Rogue 3.4/README_ja.txt'
+          test -s 'stage6c-check/Rogue 3.4/README_en.txt'
+          cmp 'stage6c-check/Rogue 3.4/LICENSE.txt' ../LICENSE
+
+      - name: Smoke check both packaged language variants and shared score filename
+        working-directory: src
+        run: |
+          mkdir -p stage6c-check/smoke
+          cd stage6c-check/smoke
+          printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > rogue34.scr
+          # Auto language responds to locale; original is English by default.
+          env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \
+            '../Rogue 3.4/rogue34.exe' -s > normal-ja.out
+          grep -F 'トップ10の冒険者' normal-ja.out
+          grep -F 'Tester' normal-ja.out
+          env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \
+            '../Rogue 3.4/rogue34_original.exe' -s > original-en.out
+          grep -F 'Top Ten Adventurers' original-en.out
+          grep -F 'Tester' original-en.out
+          # ROGUEOPTS still overrides either compiled startup default.
+          env ROGUEOPTS=language=en LC_ALL=ja_JP.UTF-8 \
+            '../Rogue 3.4/rogue34.exe' -s > overridden-en.out
+          grep -F 'Top Ten Adventurers' overridden-en.out
+          env ROGUEOPTS=language=ja LC_ALL=en_US.UTF-8 \
+            '../Rogue 3.4/rogue34_original.exe' -s > overridden-ja.out
+          grep -F 'トップ10の冒険者' overridden-ja.out
+          test ! -e rogue.scr
+          test ! -e rogue34_original.scr
+          test ! -e rogue34.save
+          test ! -e rogue34_original.save
+
+      - name: Upload Windows distribution ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: rogue34-windows-ucrt64
+          path: src/rogue34_jec_windows.zip
+          if-no-files-found: error
+          retention-days: 14

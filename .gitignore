@@ -1,0 +1,20 @@
+.DS_Store
+/src/*.o
+/src/jec/*.o
+/src/.build-options
+/src/.build-options.tmp
+/src/rogue
+
+# Windows UCRT64 build products
+/src/*.win.o
+/src/jec/*.win.o
+/src/windows/*.win.o
+/src/*.exe
+/src/.windows-build-options
+/src/.windows-build-options.tmp
+
+
+# Windows distribution ZIP and temporary staging artifacts
+/src/rogue34_jec_windows.zip
+/src/rogue34_jec_windows.tmp.zip
+/src/.rogue34-dist.*/
