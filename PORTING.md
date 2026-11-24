@@ -20,7 +20,8 @@
 | `src/jec/language.[ch]` | `ROGUEOPTS`・OSロケール・ゲーム中の言語切り替え |
 | `src/jec/unicode_text.[ch]` | UTF-8と端末セル幅を考慮した入力／表示 |
 | `src/jec/game_text.[ch]` | 日本語訳語、カタカナの巻き物名と色名 |
-| `src/Makefile`・`src/Makefile.win` | macOS / Linux・Windows用ビルド、削除、Windows配布ZIP |
+| `src/Makefile`・`src/Makefile.win` | macOS / Linux・Windows用ビルド、削除、Windows配布ZIP
+| `src/Makefile.sources` | 全OS共通のゲーム本体ソース一覧（オブジェクト構成の重複を排除） |
 | `.github/workflows/build.yml` | macOS / Linux のビルド成果物とWindowsネイティブビルド・配布ZIPの確認 |
 | `README.md`・`README_ja.md` | 独立した日英の利用者向け説明 |
 | `PORTING.md` | この技術資料（旧段階別文書を統合） |
@@ -532,3 +533,17 @@ Artifactsからダウンロードでき、Releaseへの公開は自動で行い�
 対話式の画面表示、カーソル復元、端末サイズ変更、セーブの実操作は
 引き続きWindows実機での確認が必要です。ゲーム本体・セーブ形式・
 配布ZIPの作成処理には変更を加えていません。
+
+## Windows port, stage 6-D: source and documentation consolidation (2026-11-24)
+
+- `src/Makefile.sources` に共通ゲームソース一覧を集約し、macOS/Linuxと
+  Windowsの双方が参照するようにしました。Windows専用ソースは従来どおり
+  `Makefile.win` に限定し、`make -f Makefile.win` でも動作します。
+- GitHub Actionsのテスト内容・成果物名は維持し、段階番号に依存したジョブ名と
+  一時フォルダ名を一般的な名称に整理しました。
+- 日英READMEのWindows節は現行仕様を中心にまとめ、段階ごとの詳細は
+  本書の移植記録へ残しました。Windows側のソースコメントも現状に合わせています。
+- **ゲームルール・乱数・セーブ／スコア形式・カーソル制御の処理自体は変更していません。**
+  第6-C段階のWindows実機・GitHub Actionsでの動作確認を維持するため、
+  リファクタリングはビルドの重複解消とコメント・文書の整理に限定しました。
+

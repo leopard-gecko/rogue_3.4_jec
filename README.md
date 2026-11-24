@@ -240,63 +240,29 @@ The original archive's unused `:ctfix` editor script is omitted from this
 port distribution; it is not part of the build.
 
 
-## Windows port (stage 6-C: CI distribution verification)
+## Windows (MSYS2 UCRT64)
 
-Build with **MSYS2 UCRT64 and PDCursesMod VT** from `src/`:
+Build with **MSYS2 UCRT64 and PDCursesMod VT**. From `src/`:
 
 ```sh
-make PROGRAM=rogue34 clean
 make PROGRAM=rogue34
 ```
 
-The Windows executable is `rogue34.exe`. Its default working-directory
-save and score files are `rogue34.save` and `rogue34.scr`; all the build
-variables (`PROG`/`PROGRAM`, `SAVEFILE`, `SCOREFILE`, `FILEDIR`,
-`SAVEDIR`, `SCOREDIR`) continue to work as on macOS/Linux.
+The executable is `rogue34.exe`; default save/score files are
+`rogue34.save` and `rogue34.scr` in the running working directory.
+`PROG`/`PROGRAM`, `SAVEFILE`, `SCOREFILE`, `FILEDIR`, `SAVEDIR`, and
+`SCOREDIR` have the same meanings as on macOS/Linux.
 
-Windows saving, restoring and persistent high scores were added in stage 4
-and tested on a real Windows system. Windows and Unix continue to use the
-same `R34SAV02` save format and `ROGUE34-SCORES-1` score format. UTF-8
-paths are converted to UTF-16 at the Windows API boundary. No extra lock
-file is created.
+The Windows port supports the same portable `R34SAV02` save and
+`ROGUE34-SCORES-1` score formats, UTF-8 filenames and emoji, and Japanese
+and English display. With a configured default save present, an
+Explorer-launched program offers a resume/new-game/file-picker menu.
+Shell-launched games retain the terminal size and omit the extra exit
+pause. The console normally uses an 80×24 dungeon, and cursor-shape
+restoration is handled when quitting and returning from a subshell.
 
-**New in stage 5:**
-
-- The restored file's local modification time is shown in Japanese in
-  Japanese mode, e.g. `2026年11月23日（月）10:30:00`. English mode retains
-  the historical `Mon Nov 23 10:30:00 2026` format. This applies to
-  macOS/Linux as well as Windows. Long paths are abbreviated *only on screen*.
-- A directly Explorer-launched executable shows a saved-game menu **only
-  if the configured default save exists**: `R`/Enter resume; `N` new game;
-  `F` choose a different save in the Unicode file picker; `Q` quit.
-  With no default save, the game starts immediately.
-- An existing shell and explicit `-r`/save filename arguments continue
-  to bypass the menu and preserve the terminal's configured size.
-- Windows wizard password checking works at startup and in-game with Ctrl-P.
-  It uses the original hash and a FreeSec DES `crypt(3)` implementation;
-  see `LICENSE` for this third-party code's license and attribution.
-- Only an Explorer-launched console waits for Enter on the final score
-  screen. A normal terminal session does not get an additional exit pause.
-
-The 80x24 direct-launch sizing, UTF-8/emoji support, and Rogue 3.6 JEC
-cursor-flicker workaround from previous stages are retained.
-
-**The maintainer has confirmed stage-5 functionality on real Windows.**
-Stage 6-A checks the combined implementation, including cross-language
-save/restore, integrity checks, protection of damaged saves and scores,
-UTF-8 score names, and concurrent score *reading*. Unix execution tests
-and strict Windows-stub compilation checks passed; the GitHub Actions
-Windows job also checks switching build names, configured score names,
-and forced English/Japanese builds on native MSYS2 UCRT64.
-
-**Still requiring real-device verification:** save files actually exchanged
-between Windows and Unix, concurrent Windows score writers and restore
-attempts, and long-running behavior in both Windows Terminal and Console
-Host. Game rules, RNG, messages and disk formats are unchanged in stage
-6-A. Stage 6-B adds `make dist.win` for release packaging.
-
-In MSYS2 UCRT64, install the ZIP utility and binutils if necessary, then
-run the distribution target from `src/`:
+To produce the Windows binary distribution, install `zip` and the UCRT64
+binutils if necessary, then run:
 
 ```sh
 pacman -S --needed zip mingw-w64-ucrt-x86_64-binutils
@@ -304,25 +270,22 @@ cd src
 make dist.win
 ```
 
-The resulting `src/rogue34_jec_windows.zip` contains a `Rogue 3.4/`
-folder with five files: `rogue34.exe`, `rogue34_original.exe`,
-`README_ja.txt`, `README_en.txt`, and `LICENSE.txt`. The normal executable
-uses the OS language by default; the `original` executable starts in English.
-**Both use the same game rules and the same** `rogue34.save` and
-`rogue34.scr` **names**. The packaging target builds with fixed distribution
-options instead of inheriting individual `PROGRAM`/file-directory choices.
+This generates `src/rogue34_jec_windows.zip` containing one `Rogue 3.4/`
+folder with `rogue34.exe` (OS-language startup), `rogue34_original.exe`
+(English startup), `README_ja.txt`, `README_en.txt`, and `LICENSE.txt`.
+Both executables use the **same** `rogue34.save` and `rogue34.scr` names,
+and permit language overrides through `ROGUEOPTS`. The packaging target
+checks imported DLL names and rejects unrecognized non-system runtime
+imports instead of publishing a potentially incomplete ZIP.
 
-The packaging target inspects each PE executable's DLL imports and aborts
-if it finds dependencies outside a set of Windows system libraries. It
-therefore does not silently publish a ZIP with an unbundled MSYS2 runtime
-or PDCurses DLL. The Windows cursor-shape fixes for quitting and returning
-from a shell are preserved. Stage 6-C adds a Windows UCRT64 GitHub Actions job that builds this ZIP,
-checks the exact five-file manifest and PE architecture, and runs
-non-interactive score/language smoke tests on both *extracted* executables.
-The ZIP is uploaded as the `rogue34-windows-ucrt64` workflow artifact
-(available under Actions → Build Rogue 3.4 → selected run → Artifacts).
-The downloadable GitHub artifact contains `rogue34_jec_windows.zip`;
-no GitHub Release is automatically published. The CI job must still pass
-on GitHub to establish an actual MSYS2 run; interactive Windows Terminal
-and Console Host behavior needs a separate real-device check.
-See [`PORTING.md`](PORTING.md) for further details.
+GitHub Actions builds macOS/Linux variants and validates the Windows
+archive, its manifest, PE architecture, DLL imports, and non-interactive
+score/language behavior. The Windows ZIP is available under the
+`rogue34-windows-ucrt64` artifact in **Actions → Build Rogue 3.4**.
+GitHub Releases are not created automatically.
+
+The maintainer has confirmed that the Windows build and workflow run
+successfully. Interactively checking Windows Terminal and Console Host,
+actual cross-OS save transfer, and simultaneous Windows score writers
+remains separate from automated CI. The implementation history and test
+scope are documented in [`PORTING.md`](PORTING.md).

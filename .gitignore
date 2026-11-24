@@ -13,7 +13,6 @@
 /src/.windows-build-options
 /src/.windows-build-options.tmp
 
-
 # Windows distribution ZIP and temporary staging artifacts
 /src/rogue34_jec_windows.zip
 /src/rogue34_jec_windows.tmp.zip

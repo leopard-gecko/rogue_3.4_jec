@@ -1,6 +1,7 @@
 /* Windows platform layer for Rogue 3.4 JEC.  Console sizing and
  * presentation are in rogue_windows_console.c, game rules stay unchanged.
- * Unicode editing and UTF-8 drawing are in stage 3; file locking is stage 4.
+ * Unicode input, UTF-8 output, and file locking are implemented in
+ * dedicated platform components.
  */
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -47,9 +48,6 @@ utf16_to_utf8(const wchar_t *source)
     return result;
 }
 
-/* The UCRT narrow argv may have been decoded using the system code page
- * before our .UTF8 locale is selected.  Read the original Unicode command
- * line when a save path is passed (including Explorer drag-and-drop). */
 /* Win32 paths and file-dialog selections are UTF-16; game paths remain
  * UTF-8 and are checked by the existing restore() validator. */
 static wchar_t *
@@ -213,6 +211,8 @@ rogue_windows_crypt(const char *plain, const char *salt)
     return xcrypt(plain, salt);
 }
 
+/* UCRT narrow argv may use the system code page before the UTF-8 locale
+ * is selected.  Preserve Unicode save paths passed from Explorer. */
 char *
 rogue_windows_last_argument_utf8(void)
 {

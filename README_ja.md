@@ -247,68 +247,30 @@ ROGUEOPTS='file=~/保存.save' ./rogue
 ビルドに不要なため、本移植版の配布から除外しています。
 
 
-## Windows移植（第6-C段階・CI配布検証）
+## Windows（MSYS2 UCRT64）
 
-Windows版は **MSYS2 UCRT64 + PDCursesMod VT** でビルドします。`src/` で
-次のコマンドを実行してください。
+Windows版は **MSYS2 UCRT64 + PDCursesMod VT** を使用します。
+`src/` で次のようにビルドします。
 
 ```sh
-make PROGRAM=rogue34 clean
 make PROGRAM=rogue34
 ```
 
-生成される実行ファイルは `rogue34.exe` です。既定の保存先は**実行時の
-カレントディレクトリ**で、セーブは `rogue34.save`、スコアは
-`rogue34.scr` です。`PROG`／`PROGRAM`、`SAVEFILE`、`SCOREFILE`、
-`FILEDIR`、`SAVEDIR`、`SCOREDIR` の指定方法はMac/Linuxと共通です。
+実行ファイルは `rogue34.exe` です。既定のセーブファイルは
+`rogue34.save`、スコアファイルは `rogue34.scr` で、保存先は実行時の
+カレントディレクトリです。`PROG`／`PROGRAM`、`SAVEFILE`、
+`SCOREFILE`、`FILEDIR`、`SAVEDIR`、`SCOREDIR` はMac/Linux版と共通です。
 
-第4段階でWindowsのセーブ・再開・スコア記録を実装し、Windows実機での
-動作確認が済んでいます。セーブは `R34SAV02`、スコアは
-`ROGUE34-SCORES-1` で、Mac/Linuxと同じ形式を使用します。
-WindowsではUTF-8のパスをUTF-16に変換してファイル操作し、セーブと
-スコアの排他制御は対象ファイル自体に行います。
+Windows版ではMac/Linux版と同じ `R34SAV02` セーブ形式と
+`ROGUE34-SCORES-1` スコア形式を使用します。日本語・英語の切り替え、
+UTF-8のファイル名と絵文字、80×24のダンジョン表示にも対応しています。
+ダブルクリック起動時は、標準セーブが存在する場合に限り、再開・
+新規開始・別ファイル選択のメニューを表示します。シェルからの起動では
+端末サイズを勝手に変更せず、終了時の入力待ちも追加しません。
+カーソル形状は終了時やシェル復帰時に復元します。
 
-**第5段階では次の機能を追加しました。**
-
-- 日本語モードの再開通知は、保存ファイルの更新日時を
-  `2026年11月23日（月）10:30:00` の形式で表示します。
-  英語モードは原典の英語形式（`Mon Nov 23 10:30:00 2026`）を維持します。
-  長いパスは表示幅に合わせて省略しますが、実際の保存先は変更しません。
-  日時の日本語化はmacOS/Linuxにも共通で反映されます。
-- Windowsの**ダブルクリック起動**で、既定のセーブファイルが存在する
-  場合だけ起動メニューを出します。`R`／Enter＝標準セーブを再開、
-  `N`＝新しい冒険、`F`＝ファイル選択ダイアログから再開、`Q`＝終了です。
-  セーブがなければ新しい冒険を自動開始します。
-- `-r` やセーブファイル名を指定したコマンドライン起動は、メニューを
-  表示せず従来どおり再開します。既存のシェルから起動した場合も
-  ダブルクリック用のメニューや強制的な端末サイズ変更は行いません。
-- Windowsでも、ゲーム開始時とゲーム中（Ctrl-P）のウィザード認証に
-  対応しました。原典のパスワード照合値を維持し、Windowsでは
-  FreeSec版DES `crypt(3)` を使用します。新しいライセンス条件は
-  `LICENSE` に記載しています。
-- ダブルクリック起動時は、ゲーム終了後のスコア画面でReturnの入力を
-  待ちます。既存のターミナルから起動した場合は、余分な終了待機を
-  追加しません。
-
-第2・3段階で導入した80×24自動調整、Unicode・絵文字の入出力、
-3.6 JEC由来のカーソルちらつき対策も維持しています。
-
-**第5段階までのWindows実機動作はメンテナーが確認済みです。**
-第6-A段階では全機能を横断して最終検証を行いました。Linux上で
-日英相互のセーブ・再開、チェックサム、破損セーブ・スコアの保持、
-UTF-8名のスコア表示、スコアの同時参照を確認しました。Windows用の
-全ソースは検証用Win32宣言で警告なしコンパイルを確認し、GitHub
-ActionsにはWindowsネイティブでのビルド設定切り替えとスコア名の
-検証を追加しています。
-
-**未完了の実機検証**：Mac/LinuxとWindows間で実際に交換した
-セーブファイルの相互再開、Windows上での同時スコア書き込み・
-同時セーブ再開、Windows TerminalとConsole Hostでの長時間動作。
-第6-AではWindowsのゲーム処理や保存形式に変更を加えていません。
-
-**第6-B段階では**、MSYS2 UCRT64の `src/` で `make dist.win` を
-実行するだけで通常版・英語初期設定版を含むZIPを作成できるようにしました。
-必要なビルドツールに加え、MSYS2の `zip` と `objdump` が必要です。
+Windows用バイナリ配布ZIPを作成する場合は、必要に応じて
+`zip` とbinutilsを導入し、`src/` で実行します。
 
 ```sh
 pacman -S --needed zip mingw-w64-ucrt-x86_64-binutils
@@ -316,36 +278,21 @@ cd src
 make dist.win
 ```
 
-生成される `src/rogue34_jec_windows.zip` は、展開すると
-`Rogue 3.4/` フォルダとなり、以下の5ファイルを含みます。
+生成される `src/rogue34_jec_windows.zip` には `Rogue 3.4/`
+フォルダがあり、`rogue34.exe`（OS言語に応じた起動）、
+`rogue34_original.exe`（英語初期設定）、`README_ja.txt`、
+`README_en.txt`、`LICENSE.txt` を収録します。両実行ファイルは
+同じ `rogue34.save` と `rogue34.scr` を使用し、`ROGUEOPTS` で
+言語設定を上書きできます。配布ZIPの作成時にはDLL依存関係を確認し、
+認識できない外部ランタイムへの直接依存があれば作成を中止します。
 
-- `rogue34.exe`：通常版（OS設定に応じて初期言語を選択）
-- `rogue34_original.exe`：英語初期設定版（ゲームルールは共通）
-- `README_ja.txt`／`README_en.txt`：Windowsバイナリ用の説明書
-- `LICENSE.txt`：ライセンス全文（FreeSecのライセンスを含む）
+GitHub ActionsではMac/Linuxのビルドに加え、Windows配布ZIPの
+収録内容、PE形式、DLL依存、展開後の言語設定・スコア表示を検証します。
+配布ZIPは **Actions → Build Rogue 3.4 → 実行結果 → Artifacts** の
+`rogue34-windows-ucrt64` から取得できます。GitHub Releaseへの
+自動公開は行いません。
 
-両EXEの既定のセーブ名は `rogue34.save`、スコア名は
-`rogue34.scr` で共通です。`make dist.win` はその配布用設定で
-再ビルドするため、通常の `PROGRAM=` などの個別ビルド設定は
-配布用ZIPには引き継ぎません。終了時とシェル復帰時のWindows
-カーソル形状復元処理も含みます。DLLのインポートを調べ、Windows
-標準以外のDLLが見つかる場合はZIP作成を中止します。
-
-**第6-C段階では**、GitHub ActionsのWindows UCRT64ジョブに
-`make dist.win` とZIP内容の検査を追加しました。ZIP内のファイルが指定の
-5種類だけであること、両方のEXEが64ビットWindows用であること、
-外部のMSYS2/PDCurses DLLへの直接依存がないことを確認します。
-さらにZIPを展開した両EXEの `-s` を実行し、初期言語設定・
-`ROGUEOPTS` による上書き・共通スコアファイル名を検証します。
-
-生成した `rogue34_jec_windows.zip` は、GitHubの
-**Actions → Build Rogue 3.4 → 実行結果 → Artifacts** に
-`rogue34-windows-ucrt64` という名前で保存する設定です。
-GitHubからダウンロードしたアーティファクトのZIP内に、配布用の
-`rogue34_jec_windows.zip` が入ります。Releaseの自動公開は行いません。
-
-**GitHub Actions上での実際の成功は、変更を反映した後に確認が必要です。**
-Windows Terminal／Console Hostでの対話操作はCIから検証できないため、
-引き続き実機での確認が必要です。
-
-詳細は [`PORTING.md`](PORTING.md) を参照してください。
+Windows版とGitHub Actionsの正常動作は確認済みです。Windows Terminal／
+Console Hostでの対話操作、OSをまたぐセーブファイルの相互交換、
+Windows上での同時スコア書き込みについては、CIとは別に検証が必要です。
+移植段階ごとの詳細な変更履歴は [`PORTING.md`](PORTING.md) を参照してください。

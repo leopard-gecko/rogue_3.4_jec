@@ -48,10 +48,8 @@ BUILD_CPPFLAGS = $(PLATFORM_CPPFLAGS) -DDEFAULT_LANGUAGE=$(DEFAULT_LANGUAGE) \
   $(call unix_shell_quote,-DROGUE_SCOREFILE="$(SCOREFILE)") \
   $(call unix_shell_quote,-DROGUE_SCOREDIR="$(SCOREDIR)")
 
-SRCS = vers.c main.c rooms.c passages.c command.c move.c fight.c chase.c \
-       init.c things.c potions.c wizard.c list.c io.c rip.c daemon.c daemons.c \
-       weapons.c monsters.c save.c options.c armor.c globals.c compat.c \
-       jec/language.c jec/unicode_text.c jec/game_text.c
+include Makefile.sources
+SRCS = $(GAME_SRCS)
 OBJS = $(SRCS:.c=.o)
 
 .PHONY: all clean original english japanese FORCE_BUILD_OPTIONS
@@ -72,7 +70,7 @@ FORCE_BUILD_OPTIONS:
 	  $(call unix_shell_quote,LDLIBS=$(LDLIBS)) > $@.tmp
 	@if test -f $@ && cmp -s $@.tmp $@; then rm -f $@.tmp; else mv $@.tmp $@; fi
 
-$(OBJS): .build-options rogue.h jec/language.h jec/unicode_text.h jec/game_text.h
+$(OBJS): .build-options Makefile.sources rogue.h jec/language.h jec/unicode_text.h jec/game_text.h
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(BUILD_CPPFLAGS) $(CFLAGS) $(PORT_CFLAGS) -c -o $@ $<
 

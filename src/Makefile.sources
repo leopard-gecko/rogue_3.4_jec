@@ -1,0 +1,6 @@
+# Common game sources for Unix and Windows builds.
+# Keep this list in one place; platform-specific implementations stay separate.
+GAME_SRCS = vers.c main.c rooms.c passages.c command.c move.c fight.c chase.c \
+       init.c things.c potions.c wizard.c list.c io.c rip.c daemon.c daemons.c \
+       weapons.c monsters.c save.c options.c armor.c globals.c compat.c \
+       jec/language.c jec/unicode_text.c jec/game_text.c

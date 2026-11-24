@@ -62,11 +62,10 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  windows-stage6c:
-    # Retain stage 6-A score/configuration checks and add stage 6-C
-    # distribution creation, archive inspection and extracted EXE smoke tests.
+  windows:
+    # Verify configurations, score access, packaged executables and imports.
     # Interactive Windows Terminal/Console Host checks remain a field test.
-    name: windows-ucrt64-stage6c-distribution
+    name: windows-ucrt64
     runs-on: windows-2025
     timeout-minutes: 30
     defaults:
@@ -99,7 +98,7 @@ jobs:
       - name: Verify static PDCurses VT library
         run: test -s /ucrt64/lib/libpdcurses_vt.a
 
-      - name: Compile and link Windows stage 6-A
+      - name: Compile and link Windows executable
         working-directory: src
         run: |
           make PROGRAM=rogue34
@@ -109,8 +108,8 @@ jobs:
       - name: Smoke check score-file read-only behavior
         working-directory: src
         run: |
-          mkdir -p stage4-check
-          cd stage4-check
+          mkdir -p score-check
+          cd score-check
           ../rogue34.exe -s > missing.out
           test ! -e rogue34.scr
           test ! -s missing.out
@@ -134,11 +133,11 @@ jobs:
       - name: Verify PROGRAM alias, original and Japanese builds, configured score names
         working-directory: src
         run: |
-          # Keep binary option tests separate from the default-score smoke above.
+          # Keep build-option tests separate from the default-score smoke above.
           make PROGRAM=rogueqa original SAVEFILE=qa_save.save SCOREFILE=qa_score.scr FILEDIR=.
           test -f rogueqa.exe
-          mkdir -p stage6a-options
-          cd stage6a-options
+          mkdir -p options-check
+          cd options-check
           printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > qa_score.scr
           ../rogueqa.exe -s > original.out
           grep -F 'Top Ten Adventurers' original.out
@@ -146,7 +145,7 @@ jobs:
           test ! -e rogue.scr
           cd ..
           make PROGRAM=rogueqa japanese SAVEFILE=qa_save.save SCOREFILE=qa_score.scr FILEDIR=.
-          cd stage6a-options
+          cd options-check
           ../rogueqa.exe -s > japanese.out
           grep -F 'トップ10の冒険者' japanese.out
           grep -F Tester japanese.out
@@ -154,7 +153,7 @@ jobs:
           cd ..
           # Altering the target names rebuilds the embedded path settings.
           make PROGRAM=rogueqa SAVEFILE=qa_new.save SCOREFILE=qa_new.scr FILEDIR=.
-          cd stage6a-options
+          cd options-check
           cp qa_score.scr qa_new.scr
           ../rogueqa.exe -s > renamed.out
           grep -F Tester renamed.out
@@ -183,11 +182,11 @@ jobs:
             'Rogue 3.4/LICENSE.txt'; do
             unzip -Z1 "$archive" | grep -Fx -- "$member" > /dev/null
           done
-          mkdir -p stage6c-check
-          unzip -q "$archive" -d stage6c-check
+          mkdir -p package-check
+          unzip -q "$archive" -d package-check
           for exe in \
-            'stage6c-check/Rogue 3.4/rogue34.exe' \
-            'stage6c-check/Rogue 3.4/rogue34_original.exe'; do
+            'package-check/Rogue 3.4/rogue34.exe' \
+            'package-check/Rogue 3.4/rogue34_original.exe'; do
             test -s "$exe"
             objdump -f "$exe" | grep -F 'pei-x86-64'
             # These must not require external MSYS2/PDCurses runtime DLLs.
@@ -197,15 +196,15 @@ jobs:
               exit 1
             fi
           done
-          test -s 'stage6c-check/Rogue 3.4/README_ja.txt'
-          test -s 'stage6c-check/Rogue 3.4/README_en.txt'
-          cmp 'stage6c-check/Rogue 3.4/LICENSE.txt' ../LICENSE
+          test -s 'package-check/Rogue 3.4/README_ja.txt'
+          test -s 'package-check/Rogue 3.4/README_en.txt'
+          cmp 'package-check/Rogue 3.4/LICENSE.txt' ../LICENSE
 
       - name: Smoke check both packaged language variants and shared score filename
         working-directory: src
         run: |
-          mkdir -p stage6c-check/smoke
-          cd stage6c-check/smoke
+          mkdir -p package-check/smoke
+          cd package-check/smoke
           printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > rogue34.scr
           # Auto language responds to locale; original is English by default.
           env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \

@@ -32,10 +32,7 @@ BUILD_CPPFLAGS = $(PLATFORM_CPPFLAGS) -DDEFAULT_LANGUAGE=$(DEFAULT_LANGUAGE) \
   $(call windows_shell_quote,-DROGUE_SCOREDIR="$(SCOREDIR)")
 LDLIBS ?= -lpdcurses_vt -lwinmm -luser32 -lgdi32 -lcomdlg32 -lshell32 -ladvapi32
 
-GAME_SRCS = vers.c main.c rooms.c passages.c command.c move.c fight.c chase.c \
-       init.c things.c potions.c wizard.c list.c io.c rip.c daemon.c daemons.c \
-       weapons.c monsters.c save.c options.c armor.c globals.c compat.c \
-       jec/language.c jec/unicode_text.c jec/game_text.c
+include Makefile.sources
 SRCS = $(GAME_SRCS) windows/rogue_windows.c windows/rogue_windows_console.c windows/unicode_output.c windows/rogue_windows_files.c windows/xcrypt.c
 OBJS = $(SRCS:.c=.win.o)
 
@@ -57,7 +54,7 @@ FORCE_WINDOWS_OPTIONS:
 	  $(call windows_shell_quote,LDFLAGS=$(LDFLAGS)) \
 	  $(call windows_shell_quote,LDLIBS=$(LDLIBS)) > $@.tmp
 	@if test -f $@ && test "$$(cat $@.tmp)" = "$$(cat $@)"; then rm -f $@.tmp; else mv $@.tmp $@; fi
-$(OBJS): .windows-build-options rogue.h windows/rogue_windows.h windows/rogue_windows_console.h windows/rogue_windows_files.h jec/language.h jec/unicode_text.h jec/game_text.h jec/unicode_output.h
+$(OBJS): .windows-build-options Makefile.sources rogue.h windows/rogue_windows.h windows/rogue_windows_console.h windows/rogue_windows_files.h jec/language.h jec/unicode_text.h jec/game_text.h jec/unicode_output.h
 %.win.o: %.c
 	$(CC) $(CPPFLAGS) $(BUILD_CPPFLAGS) $(CFLAGS) $(PORT_CFLAGS) -c -o $@ $<
 
@@ -72,7 +69,7 @@ japanese:
 	  SCOREFILE="$(SCOREFILE)" SAVEDIR="$(SAVEDIR)" SCOREDIR="$(SCOREDIR)" \
 	  DEFAULT_LANGUAGE=1
 
-# Stage 6-B: portable Windows distribution.  Both EXEs deliberately use the
+# Portable Windows distribution.  Both EXEs deliberately use the
 # SAME default save/score filenames; only the startup language differs.
 # Use the normal object-option stamp to rebuild for each language, and build
 # the default (auto-language) variant last so src/rogue34.exe remains normal.
@@ -121,4 +118,4 @@ dist.win:
 	  rm -f "$$stage/.imports" "$$archive_tmp"; \
 	  (cd "$$stage" && zip -q -r "$$archive_tmp" '$(DIST_WIN_FOLDER)'); \
 	  mv -f "$$archive_tmp" "$$archive"; \
-	  echo "Created $(DIST_WIN_ARCHIVE) (Rogue 3.4/; both executables, two READMEs, LICENSE)."
+	  echo "Created $(DIST_WIN_ARCHIVE) ($(DIST_WIN_FOLDER)/; both executables, two READMEs, LICENSE)."
