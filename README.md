@@ -20,15 +20,13 @@ The historical `rogue.doc` corresponds to `2.8/usr/doc/rogue.doc`
 (MD5: `e7113c0e9aedca6edf47f2127cfad4f7`); the `rogue.6` manual page
 is from 4.1BSD (MD5: `f84eef587bc38bc0823f2cd029df030b`).
 
-Those historical documents are included **unchanged** for reference. In
-particular, old save and score filenames mentioned in `rogue.6` describe
-historical systems, not this port. Use the paths listed below.
+Those historical documents are included **unchanged** for reference.
 
 ## Building
 
-The build uses the system C compiler (`cc`) by default. From the extracted
-project directory, `make` builds the executable in `src/`; no `./configure`
-step or explicit `CC=clang` setting is required.
+On macOS/Linux, the build uses the system C compiler (`cc`) by default.
+Run `make` in `src/` to build `rogue`; no `./configure` step is required.
+Windows builds use MSYS2 UCRT64, as described below.
 
 ### macOS
 
@@ -94,51 +92,48 @@ Then run `make` in `src/`. The Makefile selects `-lcurses` on macOS and
 `-lncursesw -lcrypt` on Linux, based on the host OS. If needed, explicitly
 select a compiler with `make CC=clang` or `make CC=gcc`.
 
+### Windows (MSYS2 UCRT64)
+
+Build in the MSYS2 UCRT64 shell with PDCursesMod VT and the required compiler installed:
+
+```sh
+cd src
+make PROGRAM=rogue34
+./rogue34.exe
+```
+
+To create the Windows binary distribution, install `zip` and UCRT64 binutils:
+
+```sh
+pacman -S --needed zip mingw-w64-ucrt-x86_64-binutils
+make dist.win
+```
+
+The resulting `rogue34_jec_windows.zip` contains `rogue34.exe`,
+`rogue34_original.exe` (English startup), Japanese/English READMEs and `LICENSE.txt`
+inside `Rogue 3.4/`. Both executables share the default save and score filenames;
+packaging checks DLL imports. The Windows version supports UTF-8 filenames and an
+80×24 display; when launched by double-click with a default save present, it offers a resume menu.
+
+### Build-time executable and data-file names
+
+Use `PROG` or `PROGRAM` to set the executable name (`PROG` wins if both are set).
+The default save and score filenames are `$(PROG).save` and `$(PROG).scr`.
+
+```sh
+make PROGRAM=rogue34
+make PROG=rogue34 SAVEFILE=custom.save SCOREFILE=custom.scr
+make PROGRAM=rogue34 FILEDIR='~/Documents'
+```
+
+Save and score files normally go to the working directory at launch. `FILEDIR` sets a
+shared directory; `SAVEDIR` and `SCOREDIR` override it individually. A leading `~/`
+refers to the running user's home directory. Create any requested directory beforehand.
+The save filename can also be changed at runtime; the full save path is limited to 511 bytes.
+
 The game requires a terminal at least **80 columns by 24 rows**. Its
 internal dungeon remains 80×24 when the terminal is larger. When the
 terminal becomes smaller during play, the game pauses until it is enlarged.
-
-## Language selection and Japanese localization
-
-The startup display language follows the OS locale or `ROGUEOPTS`:
-
-```sh
-ROGUEOPTS='language=ja' ./rogue
-ROGUEOPTS='language=en' ./rogue
-ROGUEOPTS='language=auto' ./rogue
-```
-
-Use `o` during the game to change the language via `J` or `E`. **Language is
-immediately above Save file**, as in Rogue 3.6 JEC. The options screen is
-redrawn when switching languages. `make original` uses an English default,
-while `make japanese` selects a Japanese default; neither changes game rules.
-
-This port adopts Rogue 3.6 JEC's Japanese option labels and status labels,
-including 階, 金塊, 体力, 強さ, 守備 and 経験, as well as its wording for selected
-messages. Names, fruit and item call-names now accept UTF-8 and support
-Backspace, cursor-left/right and Delete at grapheme boundaries. Display
-clipping uses terminal columns, not UTF-8 bytes; score entries can retain
-UTF-8 names in their existing hex-encoded format.
-
-The Japanese localization extends the Rogue 3.6 JEC vocabulary to Rogue 3.4's
-monster and item names, inventory, combat, exploration, help and game-over
-messages. The original English data remains in the game state, and names
-are translated only for display; switching languages does not affect the
-underlying identification state. Unknown scroll titles are transliterated
-from their saved English syllables into Japanese using the 3.6 syllable
-table; the original scroll-title syllable boundaries are not stored in a
-3.4 save, so this is a display-only approximation.
-
-The game rules and timing are unchanged. New scroll
-titles are bounded to 40 UTF-8 bytes in both English and Japanese, following
-Rogue 3.6/5.4 JEC. This can change the number of random calls during title
-generation. Saved titles must already satisfy the length restriction; older save files
-are not supported. The Japanese pickup message puts the item letter before the
-verb, e.g. `あなたは短弓 (o)を手に入れた。`, following 3.6 JEC.
-
-See [PORTING.md](PORTING.md) for consolidated porting and localization notes (Japanese).
-
-**Save files created by earlier development stages (`R34SAV01`) are intentionally unsupported.**
 
 ## Playing, saving and scores
 
@@ -165,68 +160,11 @@ The current defaults are:
 
 - Save: `./rogue.save` (the working directory at launch)
 - Scores: `./rogue.scr` (the working directory at launch; not a hidden file)
-- Save format: versioned `R34SAV02` (not compatible with the historical
-  process-memory save format)
+- Save format: `R34SAV02`
 - No separate lock file is created; the score file itself is locked.
-- A successful restore displays the saved filename and its file modification time.
+- A successful restore displays the saved filename and modification time, then removes the save file.
 - If the score file does not yet exist, `-s` produces no ranking header.
 - Option screens show descriptive labels without the ROGUEOPTS keys in parentheses.
-
-
-### Build-time executable and data-file names
-
-From `src/`, `PROG` and `PROGRAM` are interchangeable names for the executable
-(`PROG` wins if both are explicitly set). The default save and score names
-follow the selected executable name:
-
-```sh
-make PROGRAM=rogue34
-# executable rogue34; ./rogue34.save and ./rogue34.scr
-
-make PROG=rogue34 SAVEFILE=custom.save SCOREFILE=.custom.scr
-# ./custom.save and ./.custom.scr (hidden score file)
-
-make PROGRAM=rogue34 FILEDIR='~/Documents' \
-    SAVEFILE=rogue34.save SCOREFILE=rogue34.scr
-# files live in the RUNNING user's ~/Documents; create that directory first
-```
-
-| Make variable | Purpose | Default |
-| --- | --- | --- |
-| `PROG` / `PROGRAM` | Executable basename (`PROG` takes precedence) | `rogue` |
-| `SAVEFILE` | Default save filename | `$(PROG).save` |
-| `SCOREFILE` | Score filename | `$(PROG).scr` |
-| `FILEDIR` | Shared save and score directory | unset (working directory) |
-| `SAVEDIR` | Save directory, overrides `FILEDIR` | `FILEDIR` or `.` |
-| `SCOREDIR` | Score directory, overrides `FILEDIR` | `FILEDIR` or `.` |
-
-A score filename starting with `.` is hidden on macOS/Linux; otherwise it is
-visible. By default, both data files are stored in the **working directory
-when the game is launched**, not necessarily alongside the executable. To
-save them under HOME instead, specify `FILEDIR='~'` or `FILEDIR='~/...'`.
-Directory options beginning with `~/` expand using the HOME of the
-**person running the executable**, never the machine that built it. Absolute
-paths are supported; ordinary relative directories are based on the working
-directory. The directories are not created automatically.
-
-Changing Make options automatically recompiles objects whose embedded settings
-must change. `make PROGRAM=rogue34 original` and the `japanese` target also
-respect the selected names and directories. `SAVEFILE` is only the initial
-save name and remains overridable by `ROGUEOPTS` and the `o` command; the
-score filename is selected at build time.
-
-The save filename and HOME directory can contain UTF-8 bytes (for example,
-Japanese characters), spaces, and paths longer than the historical 80-byte
-buffer. Save paths are limited to **511 bytes** in this port, including the
-directory and filename.
-
-For example, specify a filename under HOME with `ROGUEOPTS`:
-
-```sh
-ROGUEOPTS='file=~/mygame.save' ./rogue
-```
-
-A successful normal restore consumes the save file.
 
 ## Release contents and further documentation
 
@@ -239,53 +177,5 @@ A successful normal restore consumes the save file.
 The original archive's unused `:ctfix` editor script is omitted from this
 port distribution; it is not part of the build.
 
-
-## Windows (MSYS2 UCRT64)
-
-Build with **MSYS2 UCRT64 and PDCursesMod VT**. From `src/`:
-
-```sh
-make PROGRAM=rogue34
-```
-
-The executable is `rogue34.exe`; default save/score files are
-`rogue34.save` and `rogue34.scr` in the running working directory.
-`PROG`/`PROGRAM`, `SAVEFILE`, `SCOREFILE`, `FILEDIR`, `SAVEDIR`, and
-`SCOREDIR` have the same meanings as on macOS/Linux.
-
-The Windows port supports the same portable `R34SAV02` save and
-`ROGUE34-SCORES-1` score formats, UTF-8 filenames and emoji, and Japanese
-and English display. With a configured default save present, an
-Explorer-launched program offers a resume/new-game/file-picker menu.
-Shell-launched games retain the terminal size and omit the extra exit
-pause. The console normally uses an 80×24 dungeon, and cursor-shape
-restoration is handled when quitting and returning from a subshell.
-
-To produce the Windows binary distribution, install `zip` and the UCRT64
-binutils if necessary, then run:
-
-```sh
-pacman -S --needed zip mingw-w64-ucrt-x86_64-binutils
-cd src
-make dist.win
-```
-
-This generates `src/rogue34_jec_windows.zip` containing one `Rogue 3.4/`
-folder with `rogue34.exe` (OS-language startup), `rogue34_original.exe`
-(English startup), `README_ja.txt`, `README_en.txt`, and `LICENSE.txt`.
-Both executables use the **same** `rogue34.save` and `rogue34.scr` names,
-and permit language overrides through `ROGUEOPTS`. The packaging target
-checks imported DLL names and rejects unrecognized non-system runtime
-imports instead of publishing a potentially incomplete ZIP.
-
-GitHub Actions builds macOS/Linux variants and validates the Windows
-archive, its manifest, PE architecture, DLL imports, and non-interactive
-score/language behavior. The Windows ZIP is available under the
-`rogue34-windows-ucrt64` artifact in **Actions → Build Rogue 3.4**.
-GitHub Releases are not created automatically.
-
-The maintainer has confirmed that the Windows build and workflow run
-successfully. Interactively checking Windows Terminal and Console Host,
-actual cross-OS save transfer, and simultaneous Windows score writers
-remains separate from automated CI. The implementation history and test
-scope are documented in [`PORTING.md`](PORTING.md).
+GitHub Actions builds macOS/Linux/Windows versions and validates the Windows ZIP,
+available as the `rogue34-windows-ucrt64` artifact. It does not publish GitHub Releases.

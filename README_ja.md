@@ -24,16 +24,12 @@ CSRG Archive CD-ROM Disc 1の `2.8/usr/bin.v7/ucb/rogue` に
 （MD5: `f84eef587bc38bc0823f2cd029df030b`）。
 
 これらの歴史的資料は、参照用として**変更せずに同梱**しています。
-特に `rogue.6` に記載されている古いセーブ・スコアファイル名は
-当時の環境のものであり、本移植版とは異なります。
-現在の保存先は後述の説明を参照してください。
 
 ## ビルド方法
 
-既定ではシステム標準のCコンパイラ（`cc`）を使用します。
-展開したプロジェクトの `src/` ディレクトリで `make` を実行すると、
-実行ファイル `rogue` が生成されます。
-`./configure` や `CC=clang` の明示的な指定は不要です。
+macOS/Linuxではシステム標準のCコンパイラ（`cc`）を使用します。
+展開したプロジェクトの `src/` で `make` を実行すると、`rogue` が生成されます。
+`./configure` は不要です。Windowsは後述のMSYS2 UCRT64を使用します。
 
 ### macOS
 
@@ -101,51 +97,49 @@ MakefileはOSを判別し、macOSでは `-lcurses`、Linuxでは
 `-lncursesw -lcrypt` を使用します。必要なら `make CC=clang` や
 `make CC=gcc` でコンパイラを指定できます。
 
+### Windows（MSYS2 UCRT64）
+
+MSYS2 UCRT64とPDCursesMod VTを使用します。必要な開発環境を導入した後、
+UCRT64シェルで次のようにビルドします。
+
+```sh
+cd src
+make PROGRAM=rogue34
+./rogue34.exe
+```
+
+Windows用の配布ZIPは、`zip` とbinutilsを導入して作成します。
+
+```sh
+pacman -S --needed zip mingw-w64-ucrt-x86_64-binutils
+make dist.win
+```
+
+生成される `rogue34_jec_windows.zip` には、`Rogue 3.4/` 以下に
+`rogue34.exe`、`rogue34_original.exe`（英語初期設定）、日英README、
+`LICENSE.txt` が収録されます。両実行ファイルは同じ既定のセーブ・スコアファイル名を使用し、
+配布時にはDLL依存を検査します。Windows版はUTF-8のファイル名と80×24の表示に対応し、
+ダブルクリック起動時は標準セーブが存在する場合に再開メニューを表示します。
+
+### ビルド時のプログラム名・保存先の指定
+
+`PROG` または `PROGRAM` で実行ファイル名を指定できます（同時指定時は `PROG` を優先）。
+セーブ・スコアの既定のファイル名はそれぞれ `<プログラム名>.save`、`<プログラム名>.scr` です。
+
+```sh
+make PROGRAM=rogue34
+make PROG=rogue34 SAVEFILE=custom.save SCOREFILE=custom.scr
+make PROGRAM=rogue34 FILEDIR='~/Documents'
+```
+
+保存先の既定値はゲーム起動時のカレントディレクトリです。`FILEDIR` はセーブ・スコア共通の
+保存先を指定し、`SAVEDIR` と `SCOREDIR` で個別に上書きできます。`~/` は実行ユーザーの
+ホームを指します。指定するディレクトリは事前に作成してください。
+セーブファイル名は実行時にも変更でき、セーブパス全体の上限は511バイトです。
+
 ゲームの実行には、**80列×24行以上**の端末が必要です。
 端末ウィンドウを大きくしても、内部のダンジョン画面は80×24文字のままです。
 プレイ中に端末をそれより小さくすると、必要なサイズに戻るまでゲームが一時停止します。
-
-## 日本語・英語の切り替え
-
-日本語表示・英語表示の切り替えに対応しています。初期言語はOSの設定から選ばれ、
-`ROGUEOPTS` で明示的に指定できます。
-
-```sh
-ROGUEOPTS='language=ja' ./rogue
-ROGUEOPTS='language=en' ./rogue
-ROGUEOPTS='language=auto' ./rogue
-```
-
-ゲーム中は `o` のオプション画面から「表示する言語」を選択し、
-`J`（日本語）か `E`（英語）を入力します。言語項目は「セーブファイル名」の
-**ひとつ上**にあります。言語を切り替えるとオプション画面を再描画します。
-`make original` は英語、`make japanese` は日本語での初期表示を指定して
-クリーンビルドします。`ROGUE_LANG` は使用しません。
-
-日本語化では、**3.6 JECと同じオプションの訳語・並び順**と
-「階／金塊／体力／強さ／守備／経験」のステータス表示を採用しました。
-さらに名前、果物、品物の呼び名のUTF-8入力、絵文字や日本語の文字幅による
-折り返し対策、Backspace・左右矢印・Deleteによる文字編集、
-UTF-8名のスコア保存を整備しています。
-
-また、Rogue 3.6 JECの訳語を基準に、怪物名・品物名・戦闘・探索・
-巻き物や水薬の説明・ヘルプ・スコア関連の日本語表示を追加しました。3.4で
-異なる品物やゲーム規則は3.4の実装を維持します。言語の変更後は表示時に
-訳語が切り替わり、内部データの英語名は保存されたままです。未識別の
-巻き物の題名は、保存されている英語の音節列を3.6のカタカナ音節へ表示時に
-置き換える近似方式を採用しています（セーブには音節IDを保存しません）。
-ゲームルール、ターンや表示遅延は変更していません。
-
-巻き物の題名は、Rogue 3.6/5.4と同様に日英双方のUTF-8表記が
-40バイト以内になるよう生成時に制限しています。このため、初期化時に
-消費する乱数の回数は制限導入前の3.4 JECと異なる場合があります。
-セーブ形式は `R34SAV02` で、開発中の旧形式の読み込みには対応しません。
-拾得メッセージの持ちもの記号は、
-「あなたは短弓 (o)を手に入れた。」のように動詞の前に表示します。
-
-移植の技術的な経緯と日本語訳の方針は [PORTING.md](PORTING.md) にまとめています。
-
-**開発中の旧セーブデータ（`R34SAV01`）は読み込めません。**
 
 ## 操作方法・セーブ・スコア
 
@@ -172,68 +166,11 @@ UTF-8名のスコア保存を整備しています。
 
 - セーブファイル：`./rogue.save`（起動時のカレントディレクトリ）
 - スコアファイル：`./rogue.scr`（起動時のカレントディレクトリ、隠しファイルではありません）
-- セーブ形式：バージョン付きの `R34SAV02`（原典のプロセスメモリ保存形式とは互換性がありません）
+- セーブ形式：`R34SAV02`
 - スコアは専用のロックファイルを作らず、スコアファイル自体を排他制御します。
-- 正常に再開すると、セーブファイル名とファイルの更新日時を表示します。
+- 正常に再開すると、セーブファイル名と更新日時を表示し、使用したセーブファイルを削除します。
 - スコアファイルがまだない場合、`-s` では順位表の見出しを表示しません。
 - オプション画面では、日英とも項目名に `("terse")` のような設定キーを併記しません。
-
-
-### ビルド時のプログラム名・保存先の指定
-
-3.6 JECと同様に、`src/` で実行する `make` に設定を渡せます。
-`PROG` と `PROGRAM` はどちらも実行ファイル名を指定します。
-両方を同時に指定した場合は `PROG` が優先されます。
-
-```sh
-make PROGRAM=rogue34
-# rogue34 を生成。既定のセーブは ./rogue34.save、スコアは ./rogue34.scr
-
-make PROG=rogue34 SAVEFILE=custom.save SCOREFILE=.custom.scr
-# セーブは ./custom.save、スコアは ./.custom.scr（隠しファイル）
-
-make PROGRAM=rogue34 FILEDIR='~/Documents' \
-    SAVEFILE=rogue34.save SCOREFILE=rogue34.scr
-# 保存先は実行時ユーザーの ~/Documents（ディレクトリは事前に作成）
-```
-
-| `make` の変数 | 意味 | 既定値 |
-| --- | --- | --- |
-| `PROG` / `PROGRAM` | 実行ファイル名（`PROG` 優先） | `rogue` |
-| `SAVEFILE` | セーブファイル名 | `$(PROG).save` |
-| `SCOREFILE` | スコアファイル名 | `$(PROG).scr` |
-| `FILEDIR` | セーブ・スコア共通の保存先 | 未指定（カレントディレクトリ） |
-| `SAVEDIR` | セーブ先（`FILEDIR` より優先） | `FILEDIR` または `.` |
-| `SCOREDIR` | スコア先（`FILEDIR` より優先） | `FILEDIR` または `.` |
-
-`SCOREFILE=.rogue34.scr` のように先頭を `.` にするとmacOS/Linuxでは
-隠しファイルになり、`SCOREFILE=rogue34.scr` なら通常のファイルです。
-既定の保存先は**ゲーム起動時のカレントディレクトリ**です。実行ファイルが
-置かれたディレクトリとは限りません。ホームへ保存したいときは
-`FILEDIR='~'` や `FILEDIR='~/Documents'` を明示します。
-`FILEDIR` や各保存先の `~/` は**実行するユーザー**のホームを指し、
-ビルドしたユーザーのホームパスは埋め込みません。
-`/` で始まる絶対パスも指定できます。通常の相対ディレクトリは実行時の
-カレントディレクトリを基準とします。保存先ディレクトリは自動作成されません。
-
-ビルド設定を変更すると、Makefileが差異を検出して必要なオブジェクトを
-再コンパイルします。`make PROGRAM=rogue34 original` などの
-言語別ターゲットでも同じ名前・保存先指定を使えます。
-`SAVEFILE` は起動時の既定値で、`ROGUEOPTS` や `o` コマンドで変更できます。
-スコアファイル名はビルド時にのみ指定します。
-
-セーブファイル名やHOMEディレクトリには、日本語などのUTF-8文字列や空白を使用でき、
-原典の80バイトのバッファより長いパスにも対応しています。
-ただし、本移植版の**セーブパス全体の上限は511バイト**（ディレクトリ名と
-ファイル名を含む）です。
-
-例えば、次のように `ROGUEOPTS` でHOME以下のセーブファイル名を指定できます。
-
-```sh
-ROGUEOPTS='file=~/保存.save' ./rogue
-```
-
-正常に再開すると、使用したセーブファイルは削除されます。
 
 ## 配布内容と関連文書
 
@@ -246,53 +183,5 @@ ROGUEOPTS='file=~/保存.save' ./rogue
 原典の配布アーカイブに含まれていた未使用の編集用スクリプト `:ctfix` は、
 ビルドに不要なため、本移植版の配布から除外しています。
 
-
-## Windows（MSYS2 UCRT64）
-
-Windows版は **MSYS2 UCRT64 + PDCursesMod VT** を使用します。
-`src/` で次のようにビルドします。
-
-```sh
-make PROGRAM=rogue34
-```
-
-実行ファイルは `rogue34.exe` です。既定のセーブファイルは
-`rogue34.save`、スコアファイルは `rogue34.scr` で、保存先は実行時の
-カレントディレクトリです。`PROG`／`PROGRAM`、`SAVEFILE`、
-`SCOREFILE`、`FILEDIR`、`SAVEDIR`、`SCOREDIR` はMac/Linux版と共通です。
-
-Windows版ではMac/Linux版と同じ `R34SAV02` セーブ形式と
-`ROGUE34-SCORES-1` スコア形式を使用します。日本語・英語の切り替え、
-UTF-8のファイル名と絵文字、80×24のダンジョン表示にも対応しています。
-ダブルクリック起動時は、標準セーブが存在する場合に限り、再開・
-新規開始・別ファイル選択のメニューを表示します。シェルからの起動では
-端末サイズを勝手に変更せず、終了時の入力待ちも追加しません。
-カーソル形状は終了時やシェル復帰時に復元します。
-
-Windows用バイナリ配布ZIPを作成する場合は、必要に応じて
-`zip` とbinutilsを導入し、`src/` で実行します。
-
-```sh
-pacman -S --needed zip mingw-w64-ucrt-x86_64-binutils
-cd src
-make dist.win
-```
-
-生成される `src/rogue34_jec_windows.zip` には `Rogue 3.4/`
-フォルダがあり、`rogue34.exe`（OS言語に応じた起動）、
-`rogue34_original.exe`（英語初期設定）、`README_ja.txt`、
-`README_en.txt`、`LICENSE.txt` を収録します。両実行ファイルは
-同じ `rogue34.save` と `rogue34.scr` を使用し、`ROGUEOPTS` で
-言語設定を上書きできます。配布ZIPの作成時にはDLL依存関係を確認し、
-認識できない外部ランタイムへの直接依存があれば作成を中止します。
-
-GitHub ActionsではMac/Linuxのビルドに加え、Windows配布ZIPの
-収録内容、PE形式、DLL依存、展開後の言語設定・スコア表示を検証します。
-配布ZIPは **Actions → Build Rogue 3.4 → 実行結果 → Artifacts** の
-`rogue34-windows-ucrt64` から取得できます。GitHub Releaseへの
-自動公開は行いません。
-
-Windows版とGitHub Actionsの正常動作は確認済みです。Windows Terminal／
-Console Hostでの対話操作、OSをまたぐセーブファイルの相互交換、
-Windows上での同時スコア書き込みについては、CIとは別に検証が必要です。
-移植段階ごとの詳細な変更履歴は [`PORTING.md`](PORTING.md) を参照してください。
+GitHub ActionsではmacOS/Linux/WindowsのビルドとWindows配布ZIPを検証し、
+`rogue34-windows-ucrt64` のアーティファクトとして提供します（Releaseへの自動公開は行いません）。
