@@ -11,6 +11,10 @@ Rogue 3.4 JECは、1981年のBerkeley版Rogue 3.4を再構成した
   rogue34_original.exe  英語初期設定版
   README_ja.txt         この説明書
   README_en.txt         英語版説明書
+  rogue_ja.txt          日本語版案内書（テキスト）
+  rogue_ja.html         日本語版案内書（HTML）
+  rogue_en.txt          英語版案内書（テキスト）
+  rogue_en.html         英語版案内書（HTML）
   LICENSE.txt           著作権・ライセンス情報
 
 英語初期設定版は表示言語の既定値が異なるだけで、ゲームルールや
@@ -74,4 +78,5 @@ LICENSE.txtを参照してください。オープンソースとして再配布
 
 原典の復元ソース：
 https://github.com/rogueforge/rogue3.4
-原典由来の案内書（rogue.doc）はJECのソース配布版に収録されています。
+詳しい遊び方は同梱の案内書を参照してください。HTML版はブラウザで開けます。
+ソース配布版にはMarkdown版の案内書も収録されています。

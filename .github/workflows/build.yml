@@ -170,15 +170,19 @@ jobs:
         run: |
           archive=rogue34_jec_windows.zip
           unzip -tq "$archive"
-          # One directory plus exactly five files; no accidental build output.
+          # One directory plus exactly nine files; no accidental build output.
           count="$(unzip -Z1 "$archive" | wc -l | tr -d '[:space:]')"
-          test "$count" -eq 6
+          test "$count" -eq 10
           for member in \
             'Rogue 3.4/' \
             'Rogue 3.4/rogue34.exe' \
             'Rogue 3.4/rogue34_original.exe' \
             'Rogue 3.4/README_ja.txt' \
             'Rogue 3.4/README_en.txt' \
+            'Rogue 3.4/rogue_ja.txt' \
+            'Rogue 3.4/rogue_ja.html' \
+            'Rogue 3.4/rogue_en.txt' \
+            'Rogue 3.4/rogue_en.html' \
             'Rogue 3.4/LICENSE.txt'; do
             unzip -Z1 "$archive" | grep -Fx -- "$member" > /dev/null
           done
@@ -198,6 +202,11 @@ jobs:
           done
           test -s 'package-check/Rogue 3.4/README_ja.txt'
           test -s 'package-check/Rogue 3.4/README_en.txt'
+          # Confirm each guide is included without truncation or conversion.
+          for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do
+            test -s "package-check/Rogue 3.4/$guide"
+            cmp "package-check/Rogue 3.4/$guide" "$guide"
+          done
           cmp 'package-check/Rogue 3.4/LICENSE.txt' ../LICENSE
 
       - name: Smoke check both packaged language variants and shared score filename

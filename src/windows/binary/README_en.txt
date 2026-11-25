@@ -10,6 +10,10 @@ PACKAGE CONTENTS
   rogue34_original.exe  English-default build
   README_ja.txt         Japanese instructions
   README_en.txt         This file
+  rogue_ja.txt          Japanese guide (plain text)
+  rogue_ja.html         Japanese guide (HTML)
+  rogue_en.txt          English guide (plain text)
+  rogue_en.html         English guide (HTML)
   LICENSE.txt           Copyright and redistribution conditions
 
 The English-default executable changes only the initial display language.
@@ -68,4 +72,5 @@ attribution/redistribution terms for the FreeSec DES crypt(3) code.
 
 Reconstructed historical source:
 https://github.com/rogueforge/rogue3.4
-The JEC source distribution includes the historical guide (rogue.doc).
+For full playing instructions, see the included guides. The HTML files can
+be opened in a browser. The source distribution also includes Markdown guides.

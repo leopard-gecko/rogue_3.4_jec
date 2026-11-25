@@ -16,11 +16,8 @@ toolchain produces a byte-exact match to the CSRG Archive CD-ROM Disc 1
 executable `2.8/usr/bin.v7/ucb/rogue`
 (MD5: `88f791623b2a684d2555891c0f5b6735`).
 
-The historical `rogue.doc` corresponds to `2.8/usr/doc/rogue.doc`
-(MD5: `e7113c0e9aedca6edf47f2127cfad4f7`); the `rogue.6` manual page
-is from 4.1BSD (MD5: `f84eef587bc38bc0823f2cd029df030b`).
-
-Those historical documents are included **unchanged** for reference.
+The included `rogue.6` manual page is from 4.1BSD
+(MD5: `f84eef587bc38bc0823f2cd029df030b`) and is preserved for reference.
 
 ## Building
 
@@ -110,8 +107,8 @@ make dist.win
 ```
 
 The resulting `rogue34_jec_windows.zip` contains `rogue34.exe`,
-`rogue34_original.exe` (English startup), Japanese/English READMEs and `LICENSE.txt`
-inside `Rogue 3.4/`. Both executables share the default save and score filenames;
+`rogue34_original.exe` (English startup), Japanese/English READMEs, guides
+in both languages (TXT and HTML), and `LICENSE.txt` inside `Rogue 3.4/`. Both executables share the default save and score filenames;
 packaging checks DLL imports. The Windows version supports UTF-8 filenames and an
 80×24 display; when launched by double-click with a default save present, it offers a resume menu.
 
@@ -137,8 +134,9 @@ terminal becomes smaller during play, the game pauses until it is enlarged.
 
 ## Playing, saving and scores
 
-For detailed instructions, see the original guide,
-[A Guide to the Dungeons of Doom (rogue.doc)](src/rogue.doc).
+For detailed instructions, see *A Guide to the Dungeons of Doom*:
+[TXT](src/rogue_en.txt), [HTML](src/rogue_en.html), or
+[Markdown](src/rogue_en.md).
 It explains the goal of the game, screen symbols, commands, items, and combat.
 
 | Action | Command |
@@ -168,7 +166,7 @@ The current defaults are:
 
 ## Release contents and further documentation
 
-- `src/`: game source, `Makefile`, and historical guide/manual files
+- `src/`: game source, `Makefile`, bilingual guides, and the historical manual page
 - `PORTING.md`: consolidated porting decisions, original-rules comparison,
   language/Unicode details and portability notes (Japanese)
 - `LICENSE`: redistribution terms

@@ -18,12 +18,8 @@ CSRG Archive CD-ROM Disc 1の `2.8/usr/bin.v7/ucb/rogue` に
 収録された実行ファイルとバイト単位で一致します
 （MD5: `88f791623b2a684d2555891c0f5b6735`）。
 
-歴史的資料の `rogue.doc` は `2.8/usr/doc/rogue.doc`
-（MD5: `e7113c0e9aedca6edf47f2127cfad4f7`）に対応し、
-マニュアルページ `rogue.6` は4.1BSD由来です
-（MD5: `f84eef587bc38bc0823f2cd029df030b`）。
-
-これらの歴史的資料は、参照用として**変更せずに同梱**しています。
+同梱のマニュアルページ `rogue.6` は4.1BSD由来です
+（MD5: `f84eef587bc38bc0823f2cd029df030b`）。参照用として変更せずに収録しています。
 
 ## ビルド方法
 
@@ -117,7 +113,7 @@ make dist.win
 
 生成される `rogue34_jec_windows.zip` には、`Rogue 3.4/` 以下に
 `rogue34.exe`、`rogue34_original.exe`（英語初期設定）、日英README、
-`LICENSE.txt` が収録されます。両実行ファイルは同じ既定のセーブ・スコアファイル名を使用し、
+日英案内書（各TXT・HTML）、`LICENSE.txt` が収録されます。両実行ファイルは同じ既定のセーブ・スコアファイル名を使用し、
 配布時にはDLL依存を検査します。Windows版はUTF-8のファイル名と80×24の表示に対応し、
 ダブルクリック起動時は標準セーブが存在する場合に再開メニューを表示します。
 
@@ -143,9 +139,11 @@ make PROGRAM=rogue34 FILEDIR='~/Documents'
 
 ## 操作方法・セーブ・スコア
 
-詳しい遊び方については、原典に付属する英語の案内書
-[A Guide to the Dungeons of Doom（rogue.doc）](src/rogue.doc)を参照してください。
-ゲームの目的、画面の見方、操作コマンド、アイテムや戦闘などの基本が説明されています。
+詳しい遊び方については、日本語版の
+[【運命の洞窟】への案内書（HTML）](src/rogue_ja.html)を参照してください。
+[TXT](src/rogue_ja.txt)・[Markdown](src/rogue_ja.md)版も収録しています。
+英語版は[HTML](src/rogue_en.html)・[TXT](src/rogue_en.txt)・
+[Markdown](src/rogue_en.md)で収録しています。
 
 | 操作 | コマンド |
 | --- | --- |
@@ -174,7 +172,7 @@ make PROGRAM=rogue34 FILEDIR='~/Documents'
 
 ## 配布内容と関連文書
 
-- `src/`：ゲームのソースコード、`Makefile`、原典由来の案内書・マニュアル
+- `src/`：ゲームのソースコード、`Makefile`、歴史的なマニュアルページ、日英案内書（HTML・TXT・MD）
 - `PORTING.md`：移植の技術的な経緯、原典とのゲームルールの相違、
   日本語化・Unicode・セーブ形式・保存先設定に関する保守資料
 - `LICENSE`：再配布条件
