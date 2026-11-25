@@ -1,10 +1,14 @@
-.TH ROGUE 6 4/1/81
+.TH ROGUE34 6 4/1/81
 .UC 4
 .SH NAME
-rogue \- Exploring The Dungeons of Doom
+rogue34 \- Exploring The Dungeons of Doom
 .SH SYNOPSIS
-.B rogue
+.B rogue34
 [
+.B -r
+|
+.B -s
+|
 .I save_file
 ]
 .SH DESCRIPTION
@@ -29,23 +33,52 @@ among heros.
 .PP
 When the game ends, either by your death, when you quit, or if you (by
 some miracle) manage to win,
-.I rogue
-will give you alist of the top-ten scorers.  The scoring is based entirely
+.I rogue34
+will give you a list of the top-ten scorers.  The scoring is based entirely
 upon how much gold you get.  There is a 10% penalty for getting yourself
 killed.
 .PP
 For more detailed directions, read the document
 .I "A Guide to the Dungeons of Doom."
+The default name installed by
+.B make install
+is
+.B rogue34
+rather than
+.BR rogue .
+.SH OPTIONS
+.TP
+.B -r
+Restore the game from the default save file.
+.TP
+.B -s
+Show the score list.
+.TP
+.I save_file
+Restore the game from the named save file.
+.PP
+The
+.B o
+command sets game options, including the save filename and language.
+The environment variable
+.B ROGUEOPTS
+can set initial values (for example,
+.BR language=ja
+or
+.BR language=en ).
 .SH FILES
 .DT
-/usr/games/lib/rogue_roll	Score file
-.br
-~/rogue.sav	Default save file
+The default save and score files are named after the executable and are
+created in the current working directory unless configured otherwise.
+.TP
+.I program.save
+Default save file.
+.TP
+.I program.scr
+Score file.
 .SH SEE ALSO
 Michael C. Toy,
-.I "A guide to the Dungeons of Doom"
+.I "A Guide to the Dungeons of Doom"
 .SH BUGS
 .PP
-Probably infinite.  Currently known bugs are: Sometimes you are still hungry
-even after you eat food and sometimes you get a monster on the screen in
-reverse video which may or may not cause a core dump.
+Probably infinite.

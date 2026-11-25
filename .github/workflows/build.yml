@@ -47,6 +47,34 @@ jobs:
           make clean
           make
 
+      - name: Verify install/uninstall and manual pages
+        working-directory: src
+        run: |
+          stage="$RUNNER_TEMP/rogue34-install-check"
+          mkdir -p "$stage"
+          make install DESTDIR="$stage"
+          test -x "$stage/usr/local/bin/rogue34"
+          test -s "$stage/usr/local/share/man/man6/rogue34.6"
+          test -s "$stage/usr/local/share/man/cat6/rogue34.0"
+          for lang in ja en; do
+            for ext in txt html md; do
+              test -s "$stage/usr/local/share/doc/rogue34/rogue_${lang}.${ext}"
+            done
+          done
+          test -s "$stage/usr/local/share/doc/rogue34/LICENSE"
+          make uninstall DESTDIR="$stage"
+          test ! -e "$stage/usr/local/bin/rogue34"
+          test ! -e "$stage/usr/local/share/man/man6/rogue34.6"
+          test ! -e "$stage/usr/local/share/man/cat6/rogue34.0"
+          # Explicit names and absolute data directories are supported.
+          make install PROGRAM=rogue34qa FILEDIR=/var/lib/rogue34qa DESTDIR="$stage"
+          test -x "$stage/usr/local/bin/rogue34qa"
+          test -d "$stage/var/lib/rogue34qa"
+          printf 'saved data\n' > "$stage/var/lib/rogue34qa/rogue34qa.save"
+          make uninstall PROGRAM=rogue34qa DESTDIR="$stage"
+          test ! -e "$stage/usr/local/bin/rogue34qa"
+          test -f "$stage/var/lib/rogue34qa/rogue34qa.save"
+
       - name: Package executable and documentation
         run: |
           mkdir -p dist

@@ -18,8 +18,8 @@ CSRG Archive CD-ROM Disc 1の `2.8/usr/bin.v7/ucb/rogue` に
 収録された実行ファイルとバイト単位で一致します
 （MD5: `88f791623b2a684d2555891c0f5b6735`）。
 
-同梱のマニュアルページ `rogue.6` は4.1BSD由来です
-（MD5: `f84eef587bc38bc0823f2cd029df030b`）。参照用として変更せずに収録しています。
+同梱の `rogue.6` と `rogue.cat` は4.1BSD版をもとに、JEC版の起動方法と
+セーブファイルの扱いに合わせて最小限の修正を加えたものです。
 
 ## ビルド方法
 
@@ -133,6 +133,27 @@ make PROGRAM=rogue34 FILEDIR='~/Documents'
 ホームを指します。指定するディレクトリは事前に作成してください。
 セーブファイル名は実行時にも変更でき、セーブパス全体の上限は511バイトです。
 
+### インストール（macOS / Linux / Raspberry Pi OS）
+
+`src/` で以下を実行すると、本体・マニュアル・日英案内書をインストールできます。
+
+```sh
+sudo make install
+man rogue34
+```
+
+通常の `make` は従来どおり `rogue` を作成しますが、`make install` の
+既定のインストール名は `rogue34` です。`make install PROG=名前` または
+`make install PROGRAM=名前` で変更できます。インストール先は `PREFIX`
+（既定 `/usr/local`）、`BINDIR`、`MANDIR`、`DOCDIR`、`DESTDIR` で指定できます。
+`rogue.6` はman6、整形済みの `rogue.cat` はcat6へ収録します。
+
+アンインストールは `sudo make uninstall` です（インストール時に指定した変数は
+同じ値を指定してください）。セーブ・スコアファイルは削除しません。
+`FILEDIR`、`SAVEDIR`、`SCOREDIR` で絶対パスを指定した場合、そのディレクトリは
+`make install` 時に作成します。相対パスと `~/` で始まるパスは作成しません。
+Windows版は従来どおり `make dist.win` で配布ZIPを作成します。
+
 ゲームの実行には、**80列×24行以上**の端末が必要です。
 端末ウィンドウを大きくしても、内部のダンジョン画面は80×24文字のままです。
 プレイ中に端末をそれより小さくすると、必要なサイズに戻るまでゲームが一時停止します。
@@ -172,7 +193,7 @@ make PROGRAM=rogue34 FILEDIR='~/Documents'
 
 ## 配布内容と関連文書
 
-- `src/`：ゲームのソースコード、`Makefile`、歴史的なマニュアルページ、日英案内書（HTML・TXT・MD）
+- `src/`：ゲームのソースコード、`Makefile`、JEC版に合わせたマニュアルページ、日英案内書（HTML・TXT・MD）
 - `PORTING.md`：移植の技術的な経緯、原典とのゲームルールの相違、
   日本語化・Unicode・セーブ形式・保存先設定に関する保守資料
 - `LICENSE`：再配布条件

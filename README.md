@@ -16,8 +16,8 @@ toolchain produces a byte-exact match to the CSRG Archive CD-ROM Disc 1
 executable `2.8/usr/bin.v7/ucb/rogue`
 (MD5: `88f791623b2a684d2555891c0f5b6735`).
 
-The included `rogue.6` manual page is from 4.1BSD
-(MD5: `f84eef587bc38bc0823f2cd029df030b`) and is preserved for reference.
+The `rogue.6` and `rogue.cat` manual pages are based on the 4.1BSD versions,
+with minimal changes to match the JEC command-line and save-file behavior.
 
 ## Building
 
@@ -128,6 +128,28 @@ shared directory; `SAVEDIR` and `SCOREDIR` override it individually. A leading `
 refers to the running user's home directory. Create any requested directory beforehand.
 The save filename can also be changed at runtime; the full save path is limited to 511 bytes.
 
+### Installing (macOS / Linux / Raspberry Pi OS)
+
+From `src/`, install the executable, manual pages, and bilingual guides:
+
+```sh
+sudo make install
+man rogue34
+```
+
+The installed command is `rogue34` by default (ordinary `make` still builds
+`rogue`). `make install PROG=customname` or `make install PROGRAM=customname`
+selects another name. `PREFIX` (default `/usr/local`), `BINDIR`, `MANDIR`,
+`DOCDIR`, and `DESTDIR` can change the installation paths. The formatted
+`rogue.cat` is installed under `share/man/cat6`, alongside the `man6` page.
+
+To remove the installed executable and documentation, use `sudo make uninstall`
+(specifying the same variables if they were changed during installation).
+Save and score files are not removed. If an absolute `FILEDIR`, `SAVEDIR`, or
+`SCOREDIR` is specified, `make install` creates that directory; relative or
+`~/` paths are left for the player to create. On Windows use `make dist.win`
+instead of `make install`.
+
 The game requires a terminal at least **80 columns by 24 rows**. Its
 internal dungeon remains 80×24 when the terminal is larger. When the
 terminal becomes smaller during play, the game pauses until it is enlarged.
@@ -166,7 +188,7 @@ The current defaults are:
 
 ## Release contents and further documentation
 
-- `src/`: game source, `Makefile`, bilingual guides, and the historical manual page
+- `src/`: game source, `Makefile`, bilingual guides, and JEC-adjusted manual pages
 - `PORTING.md`: consolidated porting decisions, original-rules comparison,
   language/Unicode details and portability notes (Japanese)
 - `LICENSE`: redistribution terms
