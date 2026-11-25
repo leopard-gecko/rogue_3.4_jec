@@ -192,16 +192,16 @@ JEC版では、標準のセーブファイルから「`rogue -r`」で再開す�
 
 #### 8.1.2. 環境変数「ROGUEOPTS」の使用
 
-環境変数「ROGUEOPTS」は、さまざまなオプションの初期値をカンマで区切ってリストにした文字列である。真偽値はその名前をリストに入れることにより有効にすることができ、名前の前に「no」を加えると無効にすることができる。したがって、「jump」（移動中の表示を行わない）を有効に、「terse」（簡潔な表示）を無効、プレイヤー名を「Conan the Barbarian」、好きな果物を「mango」にするには、次のように設定する。
+環境変数「ROGUEOPTS」は、さまざまなオプションの初期値をカンマで区切ってリストにした文字列である。真偽値はその名前をリストに入れることにより有効にすることができ、名前の前に「no」を加えると無効にすることができる。したがって、「jump」（移動中の表示を行わない）を有効に、「terse」（簡潔な表示）を無効、プレイヤー名を「コナン・ザ・グレート」、好きな果物を「マンゴー」にするには、次のように設定する。
 
 ```text
-% setenv ROGUEOPTS "jump,noterse,name=Conan the Barbarian,fruit=mango"
+% setenv ROGUEOPTS "jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー"
 ```
 
 Bourneシェルを使っている場合は、次のように入力する。
 
 ```text
-$ ROGUEOPTS="jump,noterse,name=Conan the Barbarian,fruit=mango"
+$ ROGUEOPTS="jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー"
 $ export ROGUEOPTS
 ```
 

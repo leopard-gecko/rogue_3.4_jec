@@ -142,10 +142,10 @@ body {margin:0;padding:26px 10px 46px;color:#111;}
 <h3 id="o-command">8.1.1. 「o」コマンドの使用</h3>
 <p class="prose">ローグで「o」と入力すると、画面がクリアされ、すべてのオプションについて現在の設定が表示される。最初のオプションの値にカーソルが置かれ、入力を待つ。入力できるのは、次のオプションに進む[RETURN]キーか、一つ前のオプションに戻る「-」か、ゲームに戻る[esc]キーか、オプションの値である。有効／無効を入力するオプションの場合、有効にしたい場合は「t」（True：真）を、無効にしたい場合は「f」（False：偽）を入力する。文字を入力するオプションの場合は、文字の後に[RETURN]を入力する。</p>
 <h3 id="rogueopts">8.1.2. 環境変数「ROGUEOPTS」の使用</h3>
-<p class="prose">環境変数「ROGUEOPTS」は、さまざまなオプションの初期値をカンマで区切ってリストにした文字列である。真偽値はその名前をリストに入れることにより有効にすることができ、名前の前に「no」を加えると無効にすることができる。したがって、「jump」（移動中の表示を行わない）を有効に、「terse」（簡潔な表示）を無効、プレイヤー名を「Conan the Barbarian」、好きな果物を「mango」にするには、次のように設定する。</p>
-<pre class="shell">% setenv ROGUEOPTS &quot;jump,noterse,name=Conan the Barbarian,fruit=mango&quot;</pre>
+<p class="prose">環境変数「ROGUEOPTS」は、さまざまなオプションの初期値をカンマで区切ってリストにした文字列である。真偽値はその名前をリストに入れることにより有効にすることができ、名前の前に「no」を加えると無効にすることができる。したがって、「jump」（移動中の表示を行わない）を有効に、「terse」（簡潔な表示）を無効、プレイヤー名を「コナン・ザ・グレート」、好きな果物を「マンゴー」にするには、次のように設定する。</p>
+<pre class="shell">% setenv ROGUEOPTS &quot;jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー&quot;</pre>
 <p class="prose">Bourneシェルを使っている場合は、次のように入力する。</p>
-<pre class="shell">$ ROGUEOPTS=&quot;jump,noterse,name=Conan the Barbarian,fruit=mango&quot;
+<pre class="shell">$ ROGUEOPTS=&quot;jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー&quot;
 $ export ROGUEOPTS</pre>
 <h3 id="option-list">8.2. オプションのリスト</h3>
 <p class="prose">ここではオプションの一覧と、それぞれのオプションの説明を示す。初期値を示す場合は角括弧で囲んである。</p></div></section>

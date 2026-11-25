@@ -423,14 +423,14 @@ W      鎧を着用する。 一度に着用できる鎧は一着だけである
  に入れることにより有効にすることができ、名前の前に「no」を加え
  ると無効にすることができる。したがって、「jump」（移動中の表示
  を行わない）を有効に、「terse」（簡潔な表示）を無効、プレイヤー
- 名を「Conan the Barbarian」、好きな果物を「mango」にするには、
+ 名を「コナン・ザ・グレート」、好きな果物を「マンゴー」にするには、
  次のように設定する。
 
-    % setenv ROGUEOPTS "jump,noterse,name=Conan the Barbarian,fruit=mango"
+    % setenv ROGUEOPTS "jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー"
 
      Bourneシェルを使っている場合は、次のように入力する。
 
-    $ ROGUEOPTS="jump,noterse,name=Conan the Barbarian,fruit=mango"
+    $ ROGUEOPTS="jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー"
     $ export ROGUEOPTS
 
 8.2. オプションのリスト
