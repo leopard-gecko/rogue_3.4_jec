@@ -72,5 +72,5 @@ attribution/redistribution terms for the FreeSec DES crypt(3) code.
 
 Reconstructed historical source:
 https://github.com/rogueforge/rogue3.4
-For full playing instructions, see the included guides. The HTML files can
-be opened in a browser. The source distribution also includes Markdown guides.
+For full playing instructions, see the included guides. Their command examples
+are adapted for Windows; the HTML files can be opened in a browser. The source distribution also includes Markdown guides.

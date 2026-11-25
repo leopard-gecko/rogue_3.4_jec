@@ -114,7 +114,9 @@ dist.win:
 	  done; \
 	  cp windows/binary/README_ja.txt "$$stage/$(DIST_WIN_FOLDER)/"; \
 	  cp windows/binary/README_en.txt "$$stage/$(DIST_WIN_FOLDER)/"; \
-	  cp rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html "$$stage/$(DIST_WIN_FOLDER)/"; \
+	  for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do \
+	    sed -f windows/guide_windows.sed "$$guide" > "$$stage/$(DIST_WIN_FOLDER)/$$guide"; \
+	  done; \
 	  cp ../LICENSE "$$stage/$(DIST_WIN_FOLDER)/LICENSE.txt"; \
 	  rm -f "$$stage/.imports" "$$archive_tmp"; \
 	  (cd "$$stage" && zip -q -r "$$archive_tmp" '$(DIST_WIN_FOLDER)'); \

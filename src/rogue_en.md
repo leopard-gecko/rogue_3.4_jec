@@ -153,6 +153,8 @@ Commands are given to rogue by pressing single letters. Most commands can be pre
 % rogue save_file
 ```
 
+The default save file can also be restored with `rogue -r`.
+
 **`T`**  Take armor off. You can't remove armor that is cursed. This takes extra time.
 
 **`t`**  Throw an object. This is a prefix command. Follow it with a direction and you throw an object in the specified direction. (e.g. type "th" to throw something left.)
@@ -170,7 +172,7 @@ Commands are given to rogue by pressing single letters. Most commands can be pre
 
 ## 5. Dealing with objects
 
-When you find something in the dungeon, it is common to want to pick the object up. This is accomplished in rogue by walking over the object. If you are carrying too many things, the program will tell you and it won't pick up the object, otherwise it will add it to your pack and if the notify option is set, tell you what you just picked up.
+When you find something in the dungeon, it is common to want to pick the object up. This is accomplished in rogue by walking over the object. If you are carrying too many things, the program will tell you and it won't pick up the object, otherwise it will add it to your pack and tell you what you just picked up.
 
 Many of the commands that operate on objects must prompt you to find out which object you want to use. If you change your mind and don't want to do that command after all, just press an escape and the command will be aborted.
 
@@ -184,7 +186,7 @@ If you see a monster and you wish to fight it, just attempt to run into it. Many
 
 There are various sorts of armor lying around in the dungeon. Some of it is enchanted, some is cursed and some is just normal. Different armor types have different armor classes. If a piece of armor is enchanted or cursed, its armor class will be higher or lower than normal. Here is a list of the various armor types and their normal armor class.
 
-| Class | Type |
+| Type | Class |
 | --- | --- |
 | Leather armor | 8 |
 | Studded leather / Ring mail | 7 |
@@ -206,7 +208,7 @@ There are basically two ways to set the options. The first is with the "o" comma
 
 #### 8.1.1. Using the "o" command
 
-When you press "o" in rogue, it clears the screen and displays the current settings for all the options. It then places the cursor by the value of the first option and waits for you to type. You can type a "+" which means to go to the next option, a "-" which means to go to the previous option, an escape which means to return to the game, or you can give the option a value. For boolean options this merely involves pressing "t" for true or "f" for false. For string options, type the new value followed by a return.
+When you press "o" in rogue, it clears the screen and displays the current settings for all the options. It then places the cursor by the value of the first option and waits for you to type. You can press Return to go to the next option, a "-" which means to go to the previous option, an escape which means to return to the game, or you can give the option a value. For boolean options this merely involves pressing "t" for true or "f" for false. For string options, type the new value followed by a return.
 
 
 #### 8.1.2. Using the ROGUEOPTS variable
@@ -221,7 +223,7 @@ The ROGUEOPTS variable is a string containing a comma separated list of initial 
 
 ### 8.2. Option list
 
-Here is a list of the options and an explanation of what each one is for. The default value for each is enclosed in square brackets.
+Here is a list of the options and an explanation of what each one is for. Default values, where shown, are enclosed in square brackets.
 
 **`terse [noterse]`**  Useful for those who are tired of the sometimes lengthy messages of rogue. This is a useful option for those on slow terminals.
 
@@ -237,9 +239,9 @@ Here is a list of the options and an explanation of what each one is for. The de
 
 **`fruit [slime-mold]`**  This should hold the name of a fruit that you enjoy eating. It is basically a whimsy that the program uses in a couple of places.
 
-**`language [auto]`**  Select the display language (ja or en). (JEC addition.)
+**`language [auto]`**  Select Japanese (ja) or English (en). With auto, the system language is used. Press J or E in the option screen. (JEC addition.)
 
-**`file [rogue.save]`**  Set the default save file name. (JEC addition.)
+**`file`**  Set the default save file name.
 
 
 ## 9. Acknowledgements

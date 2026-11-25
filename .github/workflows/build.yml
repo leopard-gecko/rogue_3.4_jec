@@ -202,11 +202,24 @@ jobs:
           done
           test -s 'package-check/Rogue 3.4/README_ja.txt'
           test -s 'package-check/Rogue 3.4/README_en.txt'
-          # Confirm each guide is included without truncation or conversion.
+          # Guides inside the Windows ZIP use Windows-specific command examples;
+          # the canonical source guides must remain unmodified.
           for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do
             test -s "package-check/Rogue 3.4/$guide"
-            cmp "package-check/Rogue 3.4/$guide" "$guide"
+            sed -f windows/guide_windows.sed "$guide" |
+              cmp - "package-check/Rogue 3.4/$guide"
+            if cmp -s "$guide" "package-check/Rogue 3.4/$guide"; then
+              echo "Windows guide was not adapted: $guide" >&2
+              exit 1
+            fi
           done
+          for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do
+            grep -Fq '.\rogue34.exe save_file' "package-check/Rogue 3.4/$guide"
+            grep -Fq '.\rogue34.exe -r' "package-check/Rogue 3.4/$guide"
+            grep -Fq 'rogue34.save' "package-check/Rogue 3.4/$guide"
+          done
+          grep -Fq '% rogue save_file' rogue_ja.txt
+          grep -Fq '% rogue save_file' rogue_en.txt
           cmp 'package-check/Rogue 3.4/LICENSE.txt' ../LICENSE
 
       - name: Smoke check both packaged language variants and shared score filename

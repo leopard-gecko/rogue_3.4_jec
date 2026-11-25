@@ -314,6 +314,8 @@ S     Save the current game in a file.  Caveat: Rogue  won't
       tarting it if they die.  To restore a saved game, give
       the file name as an argument to rogue. As in
                 % rogue save_file
+      The default save file can also be restored by typing
+                % rogue -r
 
 T     Take armor  off.   You  can't  remove  armor  that  is
       cursed.  This takes extra time.
@@ -358,8 +360,8 @@ W     Wear armor.  Take a piece of armor out  of  your  pack
 want  to  pick the object up.  This is accomplished in rogue
 by walking over the object.  If you are  carrying  too  many
 things,  the  program will tell you and it won't pick up the
-object, otherwise it will add it to your  pack  and  if  the
-notify option is set, tell you what you just picked up.
+object, otherwise it will add it to your pack and tell you
+what you just picked up.
 
      Many of the  commands  that  operate  on  objects  must
 prompt you to find out which object you want to use.  If you
@@ -401,7 +403,7 @@ class.
 
 
             ____________________________________
-           |____________Class___________|__Type|
+           |____________Type____________|_Class|
            |        Leather armor       |   8  |
            | Studded leather / Ring mail|   7  |
            |         Scale mail         |   6  |
@@ -430,12 +432,12 @@ no equivalent of the ROGUEOPTS feature.
      When you press "o" in rogue, it clears the  screen  and
 displays  the current settings for all the options.  It then
 places the cursor by the value of the first option and waits
-for  you  to  type.  You can type a "+" which means to go to
-the next option, a "-" which means to  go  to  the  previous
-option,  an escape which means to return to the game, or you
-can give the option  a  value.   For  boolean  options  this
-merely involves pressing "t" for true or "f" for false.  For
-string options, type the new value followed by a return.
+for  you  to  type.  Press Return to go to the next option,
+"-" to go to the previous option, or escape to return to the
+game; you can also give the option a value. For boolean
+options this merely involves pressing "t" for true or "f"
+for false.  For string options, type the new value followed
+by a return.
 
 8.1.2.  Using the ROGUEOPTS variable
 
@@ -469,7 +471,7 @@ would be
 8.2.  Option list
 
      Here is a list of the options  and  an  explanation  of
-what  each  one  is  for.   The  default  value  for each is
+what  each  one  is  for.   Default values, where shown, are
 enclosed in square brackets.
 
 terse [noterse]          Useful for those who are  tired  of
@@ -515,9 +517,11 @@ fruit [slime-mold]       This should  hold  the  name  of  a
                          basically a whimsy that the program
                          uses in a couple of places.
 
-language [auto]          Display language: ja or en. (JEC)
+language [auto]          Japanese (ja) or English (en).
+                         Auto uses the system language;
+                         press J or E in options. (JEC)
 
-file [rogue.save]        Default save file name. (JEC)
+file                     Name of the default save file.
 
 
 
