@@ -107,9 +107,9 @@ make dist.win
 ```
 
 The resulting `rogue34_jec_windows.zip` contains `rogue34.exe`,
-`rogue34_original.exe` (English startup), Japanese/English READMEs, guides
-in both languages (TXT and HTML), and `LICENSE.txt` inside `Rogue 3.4/`. Both executables share the default save and score filenames;
-packaging checks DLL imports. The Windows version supports UTF-8 filenames and an
+Japanese/English READMEs, guides in both languages (TXT and HTML), and
+`LICENSE.txt` inside `Rogue 3.4/`. Packaging checks the executable's DLL imports.
+The Windows version supports UTF-8 filenames and an
 80×24 display; when launched by double-click with a default save present, it offers a resume menu.
 
 ### Build-time executable and data-file names

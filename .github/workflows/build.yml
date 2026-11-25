@@ -170,13 +170,12 @@ jobs:
         run: |
           archive=rogue34_jec_windows.zip
           unzip -tq "$archive"
-          # One directory plus exactly nine files; no accidental build output.
+          # One directory plus exactly eight files; no accidental build output.
           count="$(unzip -Z1 "$archive" | wc -l | tr -d '[:space:]')"
-          test "$count" -eq 10
+          test "$count" -eq 9
           for member in \
             'Rogue 3.4/' \
             'Rogue 3.4/rogue34.exe' \
-            'Rogue 3.4/rogue34_original.exe' \
             'Rogue 3.4/README_ja.txt' \
             'Rogue 3.4/README_en.txt' \
             'Rogue 3.4/rogue_ja.txt' \
@@ -188,9 +187,8 @@ jobs:
           done
           mkdir -p package-check
           unzip -q "$archive" -d package-check
-          for exe in \
-            'package-check/Rogue 3.4/rogue34.exe' \
-            'package-check/Rogue 3.4/rogue34_original.exe'; do
+          test ! -e 'package-check/Rogue 3.4/rogue34_original.exe'
+          for exe in 'package-check/Rogue 3.4/rogue34.exe'; do
             test -s "$exe"
             objdump -f "$exe" | grep -F 'pei-x86-64'
             # These must not require external MSYS2/PDCurses runtime DLLs.
@@ -222,32 +220,26 @@ jobs:
           grep -Fq '% rogue save_file' rogue_en.txt
           cmp 'package-check/Rogue 3.4/LICENSE.txt' ../LICENSE
 
-      - name: Smoke check both packaged language variants and shared score filename
+      - name: Smoke check packaged language selection and score filename
         working-directory: src
         run: |
           mkdir -p package-check/smoke
           cd package-check/smoke
           printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > rogue34.scr
-          # Auto language responds to locale; original is English by default.
+          # Auto language responds to locale; ROGUEOPTS can override it.
           env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \
             '../Rogue 3.4/rogue34.exe' -s > normal-ja.out
           grep -F 'トップ10の冒険者' normal-ja.out
           grep -F 'Tester' normal-ja.out
-          env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \
-            '../Rogue 3.4/rogue34_original.exe' -s > original-en.out
-          grep -F 'Top Ten Adventurers' original-en.out
-          grep -F 'Tester' original-en.out
-          # ROGUEOPTS still overrides either compiled startup default.
+          # The single packaged executable supports both languages.
           env ROGUEOPTS=language=en LC_ALL=ja_JP.UTF-8 \
             '../Rogue 3.4/rogue34.exe' -s > overridden-en.out
           grep -F 'Top Ten Adventurers' overridden-en.out
           env ROGUEOPTS=language=ja LC_ALL=en_US.UTF-8 \
-            '../Rogue 3.4/rogue34_original.exe' -s > overridden-ja.out
+            '../Rogue 3.4/rogue34.exe' -s > overridden-ja.out
           grep -F 'トップ10の冒険者' overridden-ja.out
           test ! -e rogue.scr
-          test ! -e rogue34_original.scr
           test ! -e rogue34.save
-          test ! -e rogue34_original.save
 
       - name: Upload Windows distribution ZIP
         uses: actions/upload-artifact@v7

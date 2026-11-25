@@ -556,3 +556,17 @@ and `LICENSE.txt` under `Rogue 3.4/`. Markdown editions remain in the
 source distribution. GitHub Actions checks the exact nine-file payload
 and compares the four included guides against their source files.
 No game logic, build flags or save/score formats were changed.
+
+
+## Windows distribution: single-executable package (2026-11-25)
+
+`make dist.win` now includes only `rogue34.exe` (automatic startup
+language), two Windows READMEs, four TXT/HTML guides adapted for Windows,
+and `LICENSE.txt` under `Rogue 3.4/` (eight files total).
+`rogue34_original.exe` is no longer built or included by `dist.win`.
+The earlier stage 6-B/6-C descriptions above are historical records.
+
+The standalone `make original`/`make english` target remains available to
+verify original-style English startup without shipping a separate EXE.
+GitHub Actions checks the eight-file ZIP and tests both language settings
+using the one packaged executable. No gameplay or save-format changes.

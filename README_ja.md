@@ -112,9 +112,9 @@ make dist.win
 ```
 
 生成される `rogue34_jec_windows.zip` には、`Rogue 3.4/` 以下に
-`rogue34.exe`、`rogue34_original.exe`（英語初期設定）、日英README、
-日英案内書（各TXT・HTML）、`LICENSE.txt` が収録されます。両実行ファイルは同じ既定のセーブ・スコアファイル名を使用し、
-配布時にはDLL依存を検査します。Windows版はUTF-8のファイル名と80×24の表示に対応し、
+`rogue34.exe`、日英README、日英案内書（各TXT・HTML）、
+`LICENSE.txt` が収録されます。配布時には実行ファイルのDLL依存を検査します。
+Windows版はUTF-8のファイル名と80×24の表示に対応し、
 ダブルクリック起動時は標準セーブが存在する場合に再開メニューを表示します。
 
 ### ビルド時のプログラム名・保存先の指定
