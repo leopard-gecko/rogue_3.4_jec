@@ -1,0 +1,164 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>【運命の洞窟】への案内書</title><style>
+:root { color-scheme: light; }
+* {box-sizing:border-box;}
+html {background:#e9e9e9;scroll-behavior:smooth;}
+body {margin:0;padding:26px 10px 46px;color:#111;}
+.document {display:grid;justify-items:center;row-gap:22px;}
+.page {position:relative;flex:0 0 auto;width:816px;height:1056px;overflow:hidden;background:#fff;box-shadow:0 1px 10px #0002;}
+.page-content {position:absolute;top:132px;left:91px;right:91px;bottom:74px;
+  font: 13.4px/1.62 "Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP","IPAexMincho",serif;
+  font-weight:400;line-break:strict;overflow-wrap:anywhere;}
+.page.cover .page-content {top:508px;}
+.page-content p {margin:0 0 14px;text-align:justify;text-align-last:left;}
+.page-content .prose {text-indent:2em;}
+.page-content .note {font-size:12.6px;text-indent:0;margin-left:1.5em;}
+.page-content h2,.page-content h3 {font-size:13.5px;font-weight:400;line-height:1.55;text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px;margin:4px 0 20px;}
+.page-content h3 {margin:9px 0 16px;}
+.page-content .term {display:grid;grid-template-columns:4.6em minmax(0,1fr);column-gap:0.75em;align-items:start;margin:0 0 11px;}
+.page-content .term .label {white-space:nowrap;}
+.page-content .term p {margin:0;text-indent:0;}
+.page-content .symbol-term {grid-template-columns:3.8em minmax(0,1fr);margin-bottom:3px;}
+.page-content .command-term {grid-template-columns:5.6em minmax(0,1fr);margin-bottom:10px;}
+.page-content .option {margin:0 0 13px;}
+.page-content .option .label {font-size:13px;margin:0 0 2px;}
+.page-content .option p {padding-left:2em;margin:0;}
+.page-content .shell {font:12.0px/1.6 "SFMono-Regular","Menlo","Osaka-Mono","Noto Sans Mono CJK JP",monospace;
+  white-space:pre-wrap;overflow-wrap:anywhere;padding-left:2em;margin:9px 0 12px;}
+.page-content .diagram {display:block;text-align:center;margin:6px 0 14px;}
+.page-content .diagram pre {font:12px/1.20 "Menlo","Osaka-Mono","Noto Sans Mono CJK JP",monospace;
+  letter-spacing:0;white-space:pre;text-align:left;display:inline-block;margin:0;}
+.page-content .status-example {font:12px/1.6 "Hiragino Mincho ProN","Yu Mincho",serif;white-space:nowrap;
+  text-align:center;margin:5px 0 12px;}
+.page-content .armor-table {margin:10px auto 0;border-collapse:collapse;font-size:12.9px;min-width:65%;}
+.page-content .armor-table th,.page-content .armor-table td {border:1px solid #555;padding:3px 8px;text-align:left;font-weight:normal;}
+.page-content .armor-table th:last-child,.page-content .armor-table td:last-child {text-align:center;}
+.page-content .signature {margin-top:18px;font-size:12.8px;text-indent:0;}
+.cover-title,.cover-credits,.cover-abstract-title,.cover-abstract-body,.running-head,.page-number {
+  position:absolute;font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP","IPAexMincho",serif;font-weight:400;
+}
+.cover-title {top:176px;left:91px;right:91px;text-align:center;font-size:14px;}
+.cover-credits {top:226px;left:91px;right:91px;text-align:center;font-size:12.8px;line-height:1.56;}
+.cover-abstract-title {top:350px;left:91px;right:91px;text-align:center;font-size:13px;text-decoration:underline;text-underline-offset:2px;}
+.cover-abstract-body {top:387px;left:127px;right:127px;text-indent:2em;text-align:justify;text-align-last:left;
+  font-size:13.4px;line-height:1.62;line-break:strict;overflow-wrap:anywhere;}
+.running-head {top:84px;right:91px;text-align:right;font-size:12.7px;}
+.page-number {bottom:40px;left:91px;right:91px;font-size:12px;text-align:center;}
+.toc {position:fixed;z-index:9;right:15px;top:15px;font:13px/1.5 sans-serif;}
+.toc details {position:relative;}
+.toc summary {cursor:pointer;list-style:none;display:block;border:1px solid #aaa;background:#fff;padding:5px 13px;border-radius:3px;}
+.toc summary::-webkit-details-marker {display:none;}
+.toc nav {position:absolute;top:36px;right:0;width:min(340px,calc(100vw - 30px));padding:13px 17px;
+  border:1px solid #aaa;background:#fff;box-shadow:0 5px 20px #0002;}
+.toc ol {padding-left:20px;margin:0;}
+.toc li {margin:3px 0;}
+.toc a {color:#222;text-decoration:none;}
+.toc a:hover,.toc a:focus {text-decoration:underline;}
+@media(max-width:850px) {body {overflow-x:auto;}.document {width:max-content;min-width:100%;}}
+@page {size:letter portrait;margin:0;}
+@media print {html,body {background:white;}body {padding:0;margin:0;}.toc {display:none!important;}
+  .document {display:block;}.page {width:8.5in;height:11in;box-shadow:none;margin:0;break-after:page;page-break-after:always;}
+  .page:last-child {break-after:auto;page-break-after:auto;}}
+</style></head><body><aside aria-label="HTML版の目次" class="toc">
+<details><summary>目次</summary>
+<nav aria-label="章一覧"><ol><li><a href="#intro">導入</a></li><li><a href="#what">ここで何が起こっているのか？</a></li><li><a href="#screen">画面上のものは何を意味しているのか？</a></li><li><a href="#commands">コマンド</a></li><li><a href="#objects">見つけられるアイテム</a></li><li><a href="#fighting">戦闘</a></li><li><a href="#armor">鎧</a></li><li><a href="#options">オプション</a></li><li><a href="#acknowledgments">謝辞</a></li></ol></nav>
+</details></aside><main class="document" aria-label="【運命の洞窟】への案内書"><section class="page cover" id="page-1" aria-label="第1ページ"><div class="cover-title">【運命の洞窟】への案内書</div><div class="cover-credits">マイケル C. トイ<br/>カリフォルニア大学<br/>電気工学およびコンピューターサイエンス学科<br/>コンピューターシステムリサーチグループ<br/>カリフォルニア州バークレー 94720</div><div class="cover-abstract-title">概要</div><div class="cover-abstract-body">ローグとは、視覚的なモニターをベースとしてUNIX時分割システムで動作するファンタジーゲームである。ここにローグを楽しむための案内を記し、【運命の洞窟】の中で迷ってしまうかもしれぬ者たちのためのいくばくかの手がかりとしよう。</div><div class="page-number">- 1 -</div><div class="page-content"><h2 id="intro">1. 導入</h2>
+<p class="prose">君は、とある地方の戦士組合（ファイターズ・ギルド）の訓練生としての数年の期間をちょうど終えたところだ。幾多の修練と流した汗の後についに訓練を完璧に仕上げ、危険に満ちた冒険に乗り出す準備ができた。地方ギルドの長（おさ）たちは腕前を検（あらた）める試練として君を【運命の洞窟】へと送り込んだ。任務は【イェンダーの魔除け】を持ち帰ってくることだ。この任務を成し遂げた暁には、地方ギルドの完全な会員資格が与えられるだろう。それに加え、洞窟から持ち帰った戦利品をすべて自分のものとすることも許されるのだ。</p>
+<p class="prose">旅立ちに備えて、魔法のかけられた剣が与えられる。それは、はるか彼方の【暗き山】に棲（す）むドラゴンの秘宝から得られたものである。さらに、エルフが拵（こしら）えた鎧と、洞窟にたどり着くまでの食糧が用意される。これが最後となるかもしれない別れのあいさつを家族や友人たちに告げ、道に向かう。</p>
+<p class="prose">洞窟に至る道へ出発し、平穏無事な数日の旅の後に、【運命の洞窟】の入り口を示す古（いにしえ）の廃墟を見つける。すでに夜も更けたため入り口で野営をし、広々とした空のもとで眠りにつき夜を過ごす。朝には剣を手に取り、鎧を身につけ、ほとんど最後となった食糧を口にし、洞窟へと入っていく。</p></div></section>
+<section class="page" id="page-2" aria-label="第2ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 2 -</div><div class="page-content"><h2 id="what">2. ここで何が起こっているのか？</h2>
+<p class="prose">君はローグのゲームを始めたところである。ゴールは、できる限り多くの宝物を手に入れ、【イェンダーの魔除け】を見つけ、【運命の洞窟】から生きて帰ること。画面上にはプレイヤーが行ったことのある場所と、現在いる洞窟の階の地図が示されている。その階での探索を進めていくにつれ、目の前の画面に表示されていく。</p>
+<p class="prose">ローグはほとんどのコンピューターファンタジーゲームと違ってスクリーン指向である。コマンドはすべて一つか二つのキーを押すこと（*1）によって行われ、コマンドの結果は言葉による長い説明ではなく、画面上でグラフィカルに表示される。</p>
+<p class="prose">ローグと他のコンピューターファンタジーゲームとのもう一つの大きな違いは、標準的なファンタジーゲームでは一度すべての謎を解いてしまうとほとんどの興奮と楽しみが失われてしまうのに対して、ローグは毎回新しい洞窟を作り出すので作者ですら面白くてエキサイティングなゲームだと感じることだろう。</p>
+<p class="note">（*1）英語のような文章を入力するのではなく。</p>
+<h2 id="screen">3. 画面上のものは何を意味しているのか？</h2>
+<p class="prose">ローグで何が起こっているのかを理解するためには、まずローグが画面で何をしているのかをつかんでおく必要がある。ローグの画面は、標準的なファンタジーゲームでの「あなたは〜を見る」という説明に取って代わるものである。以下はローグの画面がどのように見えるかの例である。</p>
+<figure class="diagram"><pre>---------------------
+|...................+
+|...@...........[...|
+|........B..........|
+|...................|
+--------+------------</pre></figure>
+<div class="status-example">階: 1  金塊: 0      体力: 12(12)  強さ: 18  守備: 6   経験: 1/0</div>
+<h3 id="status">3.1. 最下行</h3>
+<p class="prose">画面の一番下の行はプレイヤーの現在の状態を示す暗号のようないくつかの情報である。以下はこれらが何を意味するのかの説明である。</p></div></section>
+<section class="page" id="page-3" aria-label="第3ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 3 -</div><div class="page-content"><div class="term"><span class="label">階</span><p>この数値は洞窟の中でどこまで降りて行ったかを示している。1から始まり、洞窟を降りて行くに従い数値が上がっていく（*2）。</p></div>
+<div class="term"><span class="label">金塊</span><p>今まで見つけて手に入れた金塊の数。</p></div>
+<div class="term"><span class="label">体力</span><p>健康状態の現在値と最大値。体力ポイントは、死ぬまでにどれだけのダメージを受けることができるのかを示している。戦いで攻撃を受けるほど数値は下がっていく。休むことによって体力ポイントを取り戻すことができる。カッコ内の数値は体力ポイントの最大値である。</p></div>
+<div class="term"><span class="label">強さ</span><p>現在の強さ。18以下の整数であり、数値が高いほど、より強いことを示している。</p></div>
+<div class="term"><span class="label">守備</span><p>現在の鎧の防御性能を示す数値。非友好的な生き物からの攻撃を食い止めるのにどれだけ効果があるかを表している。この数値が低いほど、鎧の効果がより高い。</p></div>
+<div class="term"><span class="label">経験</span><p>この二つの数値は現在の経験レベルと経験値を示している。行動に応じて経験値が得られる。合計で一定の経験値になると経験レベルが上がる。経験を積んでいくにつれ、戦いの能力が上がり、不可思議な攻撃に耐えられるようになっていく。</p></div>
+<p class="note">（*2）命を落としたり、ゲームを終了したりしない限り。</p>
+<h3 id="message">3.2. 最上行</h3>
+<p class="prose">画面の一番上の行は、視覚的に表現できない物事を表すメッセージを表示するために予約されている。最上行に『--続く--』が表示された場合は、ローグは画面に他のメッセージを表示しようとしているが、まずはそこにあるメッセージがすでに読まれているのかを確認したいということである。次のメッセージを読むためにはスペースキーを押すだけでよい。</p>
+<h3 id="symbols">3.3. 画面の残りの部分</h3>
+<p class="prose">画面の残りの部分はこれまでに探検した階の地図である。画面上の各々の文字は何らかのものを意味している。以下は個々の文字が何を意味しているかの一覧である。</p><div class="term symbol-term"><span class="label">@</span><p>冒険者であるプレイヤー。</p></div><div class="term symbol-term"><span class="label">-, |</span><p>部屋の壁。</p></div><div class="term symbol-term"><span class="label">+</span><p>部屋に入る／出るための扉。</p></div><div class="term symbol-term"><span class="label">.</span><p>部屋の床。</p></div><div class="term symbol-term"><span class="label">#</span><p>部屋の間の通路の床。</p></div><div class="term symbol-term"><span class="label">*</span><p>金塊。</p></div><div class="term symbol-term"><span class="label">)</span><p>何らかの武器。</p></div><div class="term symbol-term"><span class="label">]</span><p>ひとそろいの鎧。</p></div><div class="term symbol-term"><span class="label">!</span><p>魔法の薬が入っているフラスコ、すなわち水薬。</p></div></div></section>
+<section class="page" id="page-4" aria-label="第4ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 4 -</div><div class="page-content"><div class="term symbol-term"><span class="label">?</span><p>一枚の紙、通常は魔法の巻き物。</p></div><div class="term symbol-term"><span class="label">^</span><p>わな。これには気をつけよ。</p></div><div class="term symbol-term"><span class="label">%</span><p>次の階へ降りるための階段。</p></div><div class="term symbol-term"><span class="label">:</span><p>一片の食糧。</p></div><div class="term symbol-term"><span class="label">A-Z</span><p>【運命の洞窟】の様々な住民。注意せよ、奴らは厄介で凶暴だ。</p></div>
+<h2 id="commands">4. コマンド</h2>
+<p class="prose">ローグへのコマンドは主として一つか二つの文字を入力することによって与えられる。大部分のコマンドは前に回数を入力すると繰り返すことができる（例：「10s」と入力すると10回の探索が行われる）。コマンドのリストはかなり長いが、「?」コマンドでゲーム中にいつでも読むことができる。以下は参照用としての各コマンドの簡単な説明である。</p>
+<div class="term command-term"><span class="label">?</span><p>ヘルプ用のコマンド。 ヘルプを表示してほしいコマンドの文字は何かを尋ねてくる。そこで「*」と入力すればすべてのコマンドが一覧表示され、それ以外の文字を入力すれば、それが何を行うかを説明する。</p></div>
+<div class="term command-term"><span class="label">/</span><p>「画面上のそれは何なのか？」のコマンド。 その階で見た何らかの文字を「/」の後に続けて入力すると、その文字が何であるかを示す。例えば、「/@」と入力すると、「@」がプレイヤーを表していることがわかる。</p></div>
+<div class="term command-term"><span class="label">d</span><p>アイテムを落とす。 荷物から取り出し、それを床に置く。一つのスペースを占められるのはアイテム一つだけである。</p></div>
+<div class="term command-term"><span class="label">e</span><p>食糧を食べる。 荷物の中の食糧を食べる。</p></div>
+<div class="term command-term"><span class="label">f</span><p>何かを見つけるまで進む。 後に方向を指定すると、興味深いもののそばを通るか、壁にぶつかるまで、その方向に移動し続ける。</p></div>
+<div class="term command-term"><span class="label">i</span><p>持ちものの一覧。 持ち歩いている荷物をリスト表示する。</p></div>
+<div class="term command-term"><span class="label">I</span><p>選択的なアイテム表示。 荷物の中のアイテムが何であるかを一つだけ表示する。</p></div>
+<div class="term command-term"><span class="label">h, H</span><p>左に移動。 小文字の「h」では一コマ左に移動する。大文字の「H」では何かにぶつかるまで左に移動し続ける。これはすべての移動コマンドで機能する（例：「L」は右方向に走ることを意味する）。</p></div>
+<div class="term command-term"><span class="label">j</span><p>下に移動。</p></div>
+<div class="term command-term"><span class="label">k</span><p>上に移動。</p></div></div></section>
+<section class="page" id="page-5" aria-label="第5ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 5 -</div><div class="page-content"><div class="term command-term"><span class="label">l</span><p>右に移動。</p></div>
+<div class="term command-term"><span class="label">y</span><p>斜め左上に移動。</p></div>
+<div class="term command-term"><span class="label">u</span><p>斜め右上に移動。</p></div>
+<div class="term command-term"><span class="label">b</span><p>斜め左下に移動。</p></div>
+<div class="term command-term"><span class="label">n</span><p>斜め右下に移動。</p></div>
+<div class="term command-term"><span class="label">o</span><p>オプションを調べて設定する。 このコマンドについてはオプションの節でさらに説明を加える。</p></div>
+<div class="term command-term"><span class="label">Q</span><p>終了する。 ゲームを離れる。</p></div>
+<div class="term command-term"><span class="label">q</span><p>水薬を飲む。 持ち運んでいる水薬の一本をゴクゴクと飲む。</p></div>
+<div class="term command-term"><span class="label">R</span><p>直前のメッセージを表示する。 読む前にメッセージが消えてしまった時に役に立つ。</p></div>
+<div class="term command-term"><span class="label">r</span><p>巻き物を読む。 荷物の中にある巻き物の一つを読む。</p></div>
+<div class="term command-term"><span class="label">s</span><p>わなと隠された扉を探す。 プレイヤーのすぐ隣の各コマにあるわなや隠された扉を調べる。そこに何かがあっても発見できる可能性は低いので、何かを見つけるまでは探索をしばらく続ける必要があるだろう。</p></div>
+<div class="term command-term"><span class="label">S</span><p>現在のゲームをファイルに保存する。 警告：ローグは保存したゲームのコピーを使って再開することを認めず、保存したゲームを再開すると直ちにセーブファイルを削除する。これは、危険なところでゲームをセーブしておき、死んでしまったらやり直すことを防ぐためである。保存したゲームを再開するには、次のようにセーブファイル名をローグの引数として指定する。</p></div>
+<pre class="shell">% rogue save_file</pre>
+<p class="note">JEC版では、標準のセーブファイルから「rogue -r」で再開することもできる。</p>
+<div class="term command-term"><span class="label">T</span><p>鎧を脱ぐ。 呪われた鎧は脱ぐことができない。これは特別に時間がかかる。</p></div>
+<div class="term command-term"><span class="label">t</span><p>ものを投げる。 これは接頭辞コマンドである。コマンドの後に指定した方向に向かってものを投げる（例：「th」と入力すると左に何かを投げる）。</p></div>
+<div class="term command-term"><span class="label">v</span><p>プログラムのバージョンを表示する。</p></div>
+<div class="term command-term"><span class="label">w</span><p>武器を装備する。 荷物から武器を取り出して戦闘で使うために持つ。矢を射るときには弓を装備する必要がある。一度に装備できる武器は一つだけである。</p></div></div></section>
+<section class="page" id="page-6" aria-label="第6ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 6 -</div><div class="page-content"><div class="term command-term"><span class="label">W</span><p>鎧を着用する。 一度に着用できる鎧は一着だけである。</p></div>
+<div class="term command-term"><span class="label">&gt;</span><p>階段で次の階に降りる。 これができるのは階段の上にいる時だけである。</p></div>
+<div class="term command-term"><span class="label">（スペース）</span><p>休息する。 「何もしない」コマンド。待つときや体力の回復に有用である。</p></div>
+<h2 id="objects">5. 見つけられるアイテム</h2>
+<p class="prose">洞窟の中で何かを見つけたら、そのアイテムを拾いたくなるものだろう。ローグではアイテムの上を歩くことでそれができる。ものを持ちすぎている場合にはプログラムがアイテムを拾えないと伝えてくる。そうでなければそれを荷物に加え、何を拾ったのかを教えてくれる。</p>
+<p class="prose">アイテムを扱う多くのコマンドでは、どのアイテムを使うのかを指示する必要がある。気が変わってそのコマンドを使いたくなくなった時には、[esc]キーを押せばコマンドは中止される。</p>
+<h2 id="fighting">6. 戦闘</h2>
+<p class="prose">怪物を見つけて戦いたいと思えば、ぶつかろうとするだけでよい。こちらから攻撃を加えない限り向こうからは干渉してこないことも多いだろう。「逃げるが勝ち」ということもよくあるのだ。</p>
+<h2 id="armor">7. 鎧</h2>
+<p class="prose">洞窟にはさまざまな種類の鎧が置かれている。魔法のかけられたものもあれば呪われたものもあり、単に通常のものもある。鎧の種類によって守備力は違ってくる。魔法をかけられたり呪われたりした鎧は、守備力の数値が通常より高くなったり低くなったりする。以下にさまざまな鎧の種類と通常の守備力の一覧を示す。</p>
+<table class="armor-table" aria-label="鎧の通常の守備力"><thead><tr><th>種類</th><th>守備</th></tr></thead><tbody><tr><td>革のよろい</td><td>8</td></tr><tr><td>鋲つき革のよろい／鉄環のよろい</td><td>7</td></tr><tr><td>鱗のよろい</td><td>6</td></tr><tr><td>鎖のよろい</td><td>5</td></tr><tr><td>鉄片のよろい／帯金のよろい</td><td>4</td></tr><tr><td>全身のよろい</td><td>3</td></tr></tbody></table></div></section>
+<section class="page" id="page-7" aria-label="第7ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 7 -</div><div class="page-content"><h2 id="options">8. オプション</h2>
+<p class="prose">個人的な好みやローグが物事を行う考え方の違いによって、ローグをさまざまなやり方で動作させるために設定できるオプションがある。</p>
+<h3 id="settings">8.1. オプション設定</h3>
+<p class="prose">オプションを設定する方法は二つある。一つはローグの「o」コマンドであり、二つめは環境変数「ROGUEOPTS」である。V6システムには「ROGUEOPTS」に相当する機能はない。</p>
+<h3 id="o-command">8.1.1. 「o」コマンドの使用</h3>
+<p class="prose">ローグで「o」と入力すると、画面がクリアされ、すべてのオプションについて現在の設定が表示される。最初のオプションの値にカーソルが置かれ、入力を待つ。入力できるのは、次のオプションに進む[RETURN]キーか、一つ前のオプションに戻る「-」か、ゲームに戻る[esc]キーか、オプションの値である。有効／無効を入力するオプションの場合、有効にしたい場合は「t」（True：真）を、無効にしたい場合は「f」（False：偽）を入力する。文字を入力するオプションの場合は、文字の後に[RETURN]を入力する。</p>
+<h3 id="rogueopts">8.1.2. 環境変数「ROGUEOPTS」の使用</h3>
+<p class="prose">環境変数「ROGUEOPTS」は、さまざまなオプションの初期値をカンマで区切ってリストにした文字列である。真偽値はその名前をリストに入れることにより有効にすることができ、名前の前に「no」を加えると無効にすることができる。したがって、「jump」（移動中の表示を行わない）を有効に、「terse」（簡潔な表示）を無効、プレイヤー名を「コナン・ザ・グレート」、好きな果物を「マンゴー」にするには、次のように設定する。</p>
+<pre class="shell">% setenv ROGUEOPTS &quot;jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー&quot;</pre>
+<p class="prose">Bourneシェルを使っている場合は、次のように入力する。</p>
+<pre class="shell">$ ROGUEOPTS=&quot;jump,noterse,name=コナン・ザ・グレート,fruit=マンゴー&quot;
+$ export ROGUEOPTS</pre>
+<h3 id="option-list">8.2. オプションのリスト</h3>
+<p class="prose">ここではオプションの一覧と、それぞれのオプションの説明を示す。初期値を示す場合は角括弧で囲んである。</p></div></section>
+<section class="page" id="page-8" aria-label="第8ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 8 -</div><div class="page-content"><div class="option"><div class="label">terse [noterse]（簡潔な表示）</div><p>時々あるローグの長いメッセージにうんざりしている人に有用である。遅い端末で遊ぶのに便利なオプションだろう。</p></div>
+<div class="option"><div class="label">jump [nojump]（移動中の表示を行わない）</div><p>このオプションが設定されている場合、走っている途中の表示は移動が終わるまで行われない。これによりCPUと表示の時間がかなり節約される。</p></div>
+<div class="option"><div class="label">step [nostep]（持ちものを1行ずつ表示）</div><p>持ちものの一覧やアイテム選択の際のリストを、画面全体にまとめて表示するかわりに、画面上部に一項目ずつ表示する。</p></div>
+<div class="option"><div class="label">flush [noflush]（戦闘時に先行入力をキャンセル）</div><p>戦闘のたびに、それまでに入力された未処理のキーを破棄する。急いでキーを押しすぎ、コボルドに殺されてしまうのをただ見つめるような人にとって有用である。</p></div>
+<div class="option"><div class="label">askme [noaskme]（未識別の品物について尋ねる）</div><p>巻き物や水薬を使ってもその正体が自動的には判明しない場合、後から見分けられるように呼び名を尋ねる。</p></div>
+<div class="option"><div class="label">name [アカウント名]（プレイヤー名）</div><p>プレイヤーの名前。得点者リストの上位10位に入ったときに使われる。80文字未満にすることが望ましい。</p></div>
+<div class="option"><div class="label">fruit [ネバネバかび]（好きな果物）</div><p>これは君が食べるのが好きな果物の名前にしておくべきだろう。これは要するにローグが所々でやっている遊びのうちの一つである。</p></div>
+<div class="option"><div class="label">language [auto]（表示する言語）</div><p>日本語（ja）・英語（en）を選ぶ。autoではOSの言語設定に従う。オプション画面ではJまたはEを入力する。（JEC追加）</p></div>
+<div class="option"><div class="label">file（セーブファイル名）</div><p>標準のセーブファイル名を設定する。</p></div>
+<h2 id="acknowledgments">9. 謝辞</h2>
+<p class="prose">ローグは当初グレン・ウィックマンとマイケル・トイによって構想された。ケン・アーノルドは、プログラムを使いやすくし、最後の仕上げをするうえで大きな力を貸してくれた。その助力に深く感謝したい。</p></div></section>
+<section class="page" id="page-9" aria-label="第9ページ"><div class="running-head">【運命の洞窟】への案内書</div><div class="page-number">- 9 -</div><div class="page-content"><p class="prose">また、アイデアと援助を寄せてくれたマーティー・マクナリー、スコット・ネルソン、ダニエル・ジェンセン、キップ・ヒックマン、ジョー・カラシュ、マーク・ホートン、ジャン・ミラーの各氏にも感謝の意を表したい。</p>
+<p class="signature">日本語訳およびRogue 3.4 JEC用の記述追加・修正：leopardgecko</p></div></section></main></body></html>

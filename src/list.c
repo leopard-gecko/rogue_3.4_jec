@@ -86,9 +86,9 @@ new_item(int size)
     register struct linked_list *item;
 
     if ((item = (struct linked_list *) new(sizeof *item)) == NULL)
-	msg(JSTR("%d個のヘッダを確保した後、メモリが足りなくなった。", "Ran out of memory for header after %d items"), total);
+	msg(JSTR("%d個の品物を作ったあとで管理領域のメモリが不足しました。", "Ran out of memory for header after %d items"), total);
     if ((item->l_data = new(size)) == NULL)
-	msg(JSTR("%d個のデータを確保した後、メモリが足りなくなった。", "Ran out of memory for data after %d items"), total);
+	msg(JSTR("%d個の品物を作ったあとでデータ領域のメモリが不足しました。", "Ran out of memory for data after %d items"), total);
     item->l_next = item->l_prev = NULL;
     return item;
 }

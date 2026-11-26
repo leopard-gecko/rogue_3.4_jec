@@ -132,7 +132,7 @@ quaff(void)
 	when P_HASTE:
 	    if (on(player, ISHASTE))
 	    {
-		msg(JSTR("消耗して気絶した。", "You faint from exhaustion."));
+		msg(JSTR("疲れ果てて気を失った。", "You faint from exhaustion."));
 		no_command += rnd(8);
 		extinguish(nohaste);
 		player.t_flags &= ~ISHASTE;
@@ -194,12 +194,12 @@ read_scroll(void)
     if (obj->o_type != SCROLL)
     {
 	if (!terse)
-	    msg(JSTR("それには読めるところはない。", "There is nothing on it to read"));
+	    msg(JSTR("読むものは何も書かれていない。", "There is nothing on it to read"));
 	else
-	    msg(JSTR("それは巻き物ではない。", "Nothing to read"));
+	    msg(JSTR("読むものがない。", "Nothing to read"));
 	return 0;
     }
-    msg(JSTR("巻き物は読むと消えてしまった。", "As you read the scroll, it vanishes."));
+    msg(JSTR("巻き物を読むと、消えてしまった。", "As you read the scroll, it vanishes."));
     /*
      * Calculate the effect it has on the poor guy.
      */
@@ -211,20 +211,16 @@ read_scroll(void)
 	    /*
 	     * Scroll of monster confusion.  Give him that power.
 	     */
-	    msg(JSTR("手が赤く光り始めた。", "Your hands begin to glow red"));
+	    msg(JSTR("両手が赤く光り始めた。", "Your hands begin to glow red"));
 	    player.t_flags |= CANHUH;
 	when S_LIGHT:
 	    s_know[S_LIGHT] = TRUE;
 	    if ((rp = roomin(&hero)) == NULL)
-		msg(JSTR("通路が輝き、しばらくして光は消えていった。", "The corridor glows and then fades"));
+		msg(JSTR("通路が光り輝いたが、すぐに消えた。", "The corridor glows and then fades"));
 	    else
 	    {
-		/* Keep the English wording of Rogue 3.4, but use the 3.6
-		 * Japanese messages for both normal and terse displays. */
-		msg(JSTR(terse ? "光が部屋を照らしている。" :
-		    "青色に輝く光が部屋を照らしている。",
-		    terse ? "The room is lit" :
-		    "The room is lit by a shimmering blue light."));
+		msg(JSTR("部屋が明るくなった%s", "The room is lit%s"), terse ? "" :
+                    JSTR("。青白い光で輝いている。", " by a shimmering blue light."));
 		rp->r_flags &= ~ISDARK;
 		/*
 		 * Light the room and put the player back up
@@ -269,7 +265,7 @@ read_scroll(void)
 	     * Scroll which makes you fall asleep
 	     */
 	    s_know[S_SLEEP] = TRUE;
-	    msg(JSTR("眠りにおちてしまった。", "You fall asleep."));
+	    msg(JSTR("眠り込んでしまった。", "You fall asleep."));
 	    no_command += 4 + rnd(SLEEPTIME);
 	when S_CREATE:
 	    /*
@@ -316,13 +312,13 @@ read_scroll(void)
 		    new_monster(titem, randmonster(), &mp);
 		}
 		else
-		    msg(JSTR("遠くから、かすかな苦悶の叫びが聞こえる。", "You hear a faint cry of anguish in the distance."));
+		    msg(JSTR("遠くからかすかな苦悶の叫びが聞こえた。", "You hear a faint cry of anguish in the distance."));
 	    }
 	when S_IDENT:
 	    /*
 	     * Identify, let the rogue figure something out
 	     */
-	    msg(JSTR("これは識別の巻き物だ。", "This scroll is an identify scroll"));
+	    msg(JSTR("これは持ちものを識別する巻き物だ。", "This scroll is an identify scroll"));
 	    s_know[S_IDENT] = TRUE;
 	    whatis();
 	when S_MAP:
@@ -330,7 +326,7 @@ read_scroll(void)
 	     * Scroll of magic mapping.
 	     */
 	    s_know[S_MAP] = TRUE;
-	    msg(JSTR("おや、巻き物に地図が現れたぞ。", "Oh, now this scroll has a map on it."));
+	    msg(JSTR("おや、巻き物に地図が現れた。", "Oh, now this scroll has a map on it."));
 	    overwrite(stdscr, hw);
 	    /*
 	     * Take all the things we want to keep hidden out of the window
@@ -383,9 +379,9 @@ read_scroll(void)
 		{
 		    s_know[S_GFIND] = TRUE;
 		    show_win(hw,
-			JSTR("欲ばりな気分になり、金塊の気配を感じる。--続く--", "You begin to feel greedy and you sense gold.--More--"));
+			JSTR("欲がわいてきた。金塊の気配を感じる。--続く--", "You begin to feel greedy and you sense gold.--More--"));
 		}
-		else msg(JSTR("下へ引っ張られるような感じがする。", "You begin to feel a pull downward"));
+		else msg(JSTR("下へ引っぱられるような気がする。", "You begin to feel a pull downward"));
 	    }
 	when S_TELEP:
 	    /*
@@ -403,7 +399,7 @@ read_scroll(void)
 	    }
 	when S_ENCH:
 	    if (cur_weapon == NULL)
-		msg(JSTR("奇妙な喪失感をかんじた。", "You feel a strange sense of loss."));
+		msg(JSTR("何かを失ったような妙な気分がする。", "You feel a strange sense of loss."));
 	    else
 	    {
 		cur_weapon->o_flags &= ~ISCURSED;
@@ -426,7 +422,7 @@ read_scroll(void)
 	     * if it is dropped.  Thus reading it is a mistake and produces
 	     * laughter at the poor rogue's boo boo.
 	     */
-	    msg(JSTR("遠くから、狂ったような笑い声が聞こえてくる。", "You hear maniacal laughter in the distance."));
+	    msg(JSTR("遠くから狂ったような笑い声が聞こえた。", "You hear maniacal laughter in the distance."));
 	when S_REMOVE:
 	    if (cur_armor != NULL)
 		cur_armor->o_flags &= ~ISCURSED;
@@ -438,7 +434,7 @@ read_scroll(void)
 	     * This scroll aggravates all the monsters on the current
 	     * level and sets them running towards the hero
 	     */
-	    msg(JSTR("かん高いうなり声が聞こえてくる。", "You hear a high pitched humming noise."));
+	    msg(JSTR("甲高いうなり声が聞こえる。", "You hear a high pitched humming noise."));
 	    {
 		register struct linked_list *mi;
 
@@ -449,7 +445,7 @@ read_scroll(void)
 		}
 	    }
 	otherwise:
-	    msg(JSTR("なんてややこしい巻き物だ！", "What a puzzling scroll!"));
+	    msg(JSTR("なんて不可解な巻き物だ！", "What a puzzling scroll!"));
 	    return 0;
     }
     look();	/* put the result of the scroll on the screen */

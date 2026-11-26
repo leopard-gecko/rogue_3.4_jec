@@ -58,9 +58,9 @@ take_off(void)
     if ((obj = cur_armor) == NULL)
     {
 	if (terse)
-	    msg(JSTR("よろいを着ていない。", "You aren't wearing any"));
+	    msg(JSTR("よろいを着ていない。", "Not wearing armor"));
 	else
-	    msg(JSTR("あなたはよろいを着ていない。", "You aren't wearing any"));
+	    msg(JSTR("あなたはよろいを着ていない。", "You aren't wearing any armor"));
 	return 0;
     }
     if (obj->o_flags & ISCURSED)

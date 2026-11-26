@@ -90,9 +90,9 @@ eat(void)
     if (obj->o_type != FOOD)
     {
 	if (!terse)
-	    msg(JSTR("うげっ、そんなものを食べたら病気になってしまう。", "Ugh, you would get ill if you ate that."));
+	    msg(JSTR("ううっ、そんなものを食べたら病気になるぞ。", "Ugh, you would get ill if you ate that."));
 	else
-	    msg(JSTR("それは食べられない。", "That's Inedible!"));
+	    msg(JSTR("それは食べられない！", "That's Inedible!"));
 	return 0;
     }
     /* The item is freed by discard(): retain its kind before freeing.
@@ -105,11 +105,11 @@ eat(void)
     discard(item);
     if (food_kind == 1)
     {
-	msg(JSTR("げげっ、ひどい味だ。", "Yuk, this food tastes awful"));
+	msg(JSTR("うえっ、ひどい味の食べ物だ。", "Yuk, this food tastes awful"));
 	pstats.s_exp++;
     }
     else
-	msg(JSTR("うーむ、おいしかった。", "Yum, that tasted good"));
+	msg(JSTR("おいしかった。", "Yum, that tasted good"));
     /*
      * Kill off any pending hunger fuses/daemons and restart
      */
