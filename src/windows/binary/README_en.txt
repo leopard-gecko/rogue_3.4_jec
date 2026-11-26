@@ -51,7 +51,19 @@ From an existing terminal, you may also run:
   rogue34.exe -s             Display high scores
   rogue34.exe "my save.save" Resume a specified save file
 
-ROGUEOPTS can select language=ja or language=en.
+SETTING ROGUEOPTS
+For double-click launches, search the Windows Start menu for
+"environment variables", then add a user variable in that window:
+  Variable name:  ROGUEOPTS
+  Variable value: language=ja   (Japanese; use language=en for English)
+The setting applies to newly launched games.
+
+To set it temporarily in a terminal, enter one of the following:
+  Command Prompt: set "ROGUEOPTS=language=ja"
+  PowerShell:     $env:ROGUEOPTS = "language=ja"
+Then launch rogue34.exe from the same terminal.
+Separate multiple options with commas. See the ROGUEOPTS section of the
+included Guide to the Dungeons of Doom for available options.
 
 LICENSING
 See LICENSE.txt for the original BSD conditions and

@@ -53,7 +53,19 @@ Windows TerminalおよびConsoleHostでの動作を想定しています。
   rogue34.exe -s              スコアを表示
   rogue34.exe "保存名.save"    指定したファイルから再開
 
-表示言語はROGUEOPTSの language=ja / language=en でも指定できます。
+【ROGUEOPTSの設定】
+ダブルクリック起動にも適用する場合は、Windowsのスタートメニューで
+「環境変数を編集」を検索し、ユーザー環境変数を追加します。
+  変数名: ROGUEOPTS
+  変数値: language=ja   （日本語。英語は language=en）
+設定後に新しく起動したゲームから適用されます。
+
+ターミナルから一時的に指定する場合は、次のように入力します。
+  コマンドプロンプト: set "ROGUEOPTS=language=ja"
+  PowerShell:       $env:ROGUEOPTS = "language=ja"
+その後、同じターミナルから rogue34.exe を起動してください。
+ほかの設定との併用はカンマで区切ります。設定項目の詳細は
+同梱の案内書の「ROGUEOPTS」の節を参照してください。
 
 【ライセンス】
 著作権および第三者由来のFreeSec DES crypt(3)コードの条件は
