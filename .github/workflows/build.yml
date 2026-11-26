@@ -131,6 +131,9 @@ jobs:
         run: |
           make PROGRAM=rogue34
           test -f rogue34.exe
+          test -s windows/rogue-icon.win.o
+          # A PE resource section must be present for the Windows icon.
+          objdump -h rogue34.exe | grep -Eq '[[:space:]]\.rsrc[[:space:]]'
           objdump -p rogue34.exe | grep 'DLL Name:' || true
 
       - name: Smoke check score-file read-only behavior
@@ -219,6 +222,8 @@ jobs:
           for exe in 'package-check/Rogue 3.4/rogue34.exe'; do
             test -s "$exe"
             objdump -f "$exe" | grep -F 'pei-x86-64'
+            # Confirm the icon resource survived packaging.
+            objdump -h "$exe" | grep -Eq '[[:space:]]\.rsrc[[:space:]]'
             # These must not require external MSYS2/PDCurses runtime DLLs.
             if objdump -p "$exe" | grep -Ei \
               'DLL Name:.*(pdcurses|msys-|libgcc|libwinpthread|libstdc)'; then

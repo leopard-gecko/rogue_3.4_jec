@@ -4,6 +4,7 @@
 # Includes wizard authentication, direct-launch resume, terminal cursor
 # restoration and single-executable Windows binary ZIP distribution.
 CC = gcc
+WINDRES ?= windres
 MINGW_PREFIX ?= /ucrt64
 PROG ?= rogue
 ifneq ($(strip $(PROGRAM)),)
@@ -35,11 +36,17 @@ LDLIBS ?= -lpdcurses_vt -lwinmm -luser32 -lgdi32 -lcomdlg32 -lshell32 -ladvapi32
 include Makefile.sources
 SRCS = $(GAME_SRCS) windows/rogue_windows.c windows/rogue_windows_console.c windows/unicode_output.c windows/rogue_windows_files.c windows/xcrypt.c
 OBJS = $(SRCS:.c=.win.o)
+ICON_OBJ := windows/rogue-icon.win.o
 
 .PHONY: all clean original english japanese dist.win FORCE_WINDOWS_OPTIONS
 all: $(PROG).exe
-$(PROG).exe: $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+# Embed the multi-resolution Rogue 3.4 icon in all Windows builds.
+# The same object is used by the ordinary, Japanese and original builds.
+$(ICON_OBJ): windows/rogue-icon.rc windows/rogue.ico
+	$(WINDRES) -Iwindows -i windows/rogue-icon.rc -O coff -o $@
+
+$(PROG).exe: $(OBJS) $(ICON_OBJ)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(ICON_OBJ) $(LDLIBS)
 
 # Keep compiler options in the stamp so changing PROGRAM, save/score name,
 # directories or default language triggers a complete recompile.
@@ -59,7 +66,7 @@ $(OBJS): .windows-build-options Makefile.sources rogue.h windows/rogue_windows.h
 	$(CC) $(CPPFLAGS) $(BUILD_CPPFLAGS) $(CFLAGS) $(PORT_CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJS) $(PROG).exe rogue.exe .windows-build-options .windows-build-options.tmp
+	rm -f $(OBJS) $(ICON_OBJ) $(PROG).exe rogue.exe .windows-build-options .windows-build-options.tmp
 original english:
 	$(MAKE) -f Makefile.win all PROG="$(PROG)" SAVEFILE="$(SAVEFILE)" \
 	  SCOREFILE="$(SCOREFILE)" SAVEDIR="$(SAVEDIR)" SCOREDIR="$(SCOREDIR)" \
