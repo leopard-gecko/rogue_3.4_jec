@@ -85,8 +85,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: rogue34-${{ matrix.target }}
           path: rogue34-${{ matrix.target }}.tar.gz
+          archive: false
           if-no-files-found: error
           retention-days: 14
 
@@ -272,7 +272,7 @@ jobs:
       - name: Upload Windows distribution ZIP
         uses: actions/upload-artifact@v7
         with:
-          name: rogue34-windows-ucrt64
           path: src/rogue34_jec_windows.zip
+          archive: false
           if-no-files-found: error
           retention-days: 14
