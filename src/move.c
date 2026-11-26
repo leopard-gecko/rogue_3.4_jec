@@ -216,7 +216,7 @@ show(int y, int x)
 		{
 		    if (off(*tp, ISFOUND) && !save_throw(VS_MAGIC))
 		    {
-			msg(JSTR("褐色の大あご虫の視線で混乱した。", "The umber hulk's gaze has confused you."));
+			msg(JSTR("褐色の大あご虫ににらまれ、頭が混乱してしまった。", "The umber hulk's gaze has confused you."));
 			if (on(player, ISHUH))
 			    lengthen(unconfuse, HUHDURATION + rnd(20));
 			else
@@ -330,7 +330,7 @@ trap_at(int y, int x)
 	    break;
     if (i == ntraps)
     {
-        debug("Trap at %d,%d not in array", y, x);
+        debug(JSTR("%d,%d のわなが配列にない", "Trap at %d,%d not in array"), y, x);
         return -1;
     }
     return i;

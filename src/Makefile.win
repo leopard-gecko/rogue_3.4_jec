@@ -2,7 +2,7 @@
 # Invoke through "make" (auto-selected by the parent Makefile).
 # Requires mingw-w64-ucrt-x86_64-gcc and PDCursesMod VT backend.
 # Includes wizard authentication, direct-launch resume, terminal cursor
-# restoration and two-variant binary ZIP distribution.
+# restoration and single-executable Windows binary ZIP distribution.
 CC = gcc
 MINGW_PREFIX ?= /ucrt64
 PROG ?= rogue
@@ -69,10 +69,9 @@ japanese:
 	  SCOREFILE="$(SCOREFILE)" SAVEDIR="$(SAVEDIR)" SCOREDIR="$(SCOREDIR)" \
 	  DEFAULT_LANGUAGE=1
 
-# Portable Windows distribution.  Both EXEs deliberately use the
-# SAME default save/score filenames; only the startup language differs.
-# Use the normal object-option stamp to rebuild for each language, and build
-# the default (auto-language) variant last so src/rogue34.exe remains normal.
+# Portable Windows distribution with the normal auto-language executable.
+# The original/english build target remains available, but is not distributed.
+# Use the option stamp to rebuild with the distribution's save/score names.
 # A temporary staging directory is discarded even on interrupted builds.
 # Refuse the archive if it needs any non-Windows runtime DLL; in particular,
 # PDCursesMod VT must link from the supplied static libpdcurses_vt.a.
@@ -91,14 +90,9 @@ dist.win:
 	  mkdir -p "$$stage/$(DIST_WIN_FOLDER)"; \
 	  $(MAKE) -f Makefile.win PROG=rogue34 SAVEFILE=rogue34.save \
 	    SCOREFILE=rogue34.scr FILEDIR= SAVEDIR=. SCOREDIR=. \
-	    DEFAULT_LANGUAGE=2 all; \
-	  cp rogue34.exe "$$stage/$(DIST_WIN_FOLDER)/rogue34_original.exe"; \
-	  $(MAKE) -f Makefile.win PROG=rogue34 SAVEFILE=rogue34.save \
-	    SCOREFILE=rogue34.scr FILEDIR= SAVEDIR=. SCOREDIR=. \
 	    DEFAULT_LANGUAGE=0 all; \
 	  cp rogue34.exe "$$stage/$(DIST_WIN_FOLDER)/rogue34.exe"; \
-	  for exe in "$$stage/$(DIST_WIN_FOLDER)/rogue34_original.exe" \
-	             "$$stage/$(DIST_WIN_FOLDER)/rogue34.exe"; do \
+	  for exe in "$$stage/$(DIST_WIN_FOLDER)/rogue34.exe"; do \
 	    objdump -p "$$exe" > "$$stage/.imports"; \
 	    dlls=$$(sed -n 's/^[[:space:]]*DLL Name:[[:space:]]*//p' "$$stage/.imports"); \
 	    if test -z "$$dlls"; then \
@@ -114,8 +108,11 @@ dist.win:
 	  done; \
 	  cp windows/binary/README_ja.txt "$$stage/$(DIST_WIN_FOLDER)/"; \
 	  cp windows/binary/README_en.txt "$$stage/$(DIST_WIN_FOLDER)/"; \
+	  for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do \
+	    sed -f windows/guide_windows.sed "$$guide" > "$$stage/$(DIST_WIN_FOLDER)/$$guide"; \
+	  done; \
 	  cp ../LICENSE "$$stage/$(DIST_WIN_FOLDER)/LICENSE.txt"; \
 	  rm -f "$$stage/.imports" "$$archive_tmp"; \
 	  (cd "$$stage" && zip -q -r "$$archive_tmp" '$(DIST_WIN_FOLDER)'); \
 	  mv -f "$$archive_tmp" "$$archive"; \
-	  echo "Created $(DIST_WIN_ARCHIVE) ($(DIST_WIN_FOLDER)/; both executables, two READMEs, LICENSE)."
+	  echo "Created $(DIST_WIN_ARCHIVE) ($(DIST_WIN_FOLDER)/; 1 EXE, 2 READMEs, 4 guides, LICENSE)."

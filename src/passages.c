@@ -166,7 +166,7 @@ conn(char rm_ch, char direc)
     curr.x += delta.x;
     curr.y += delta.y;
     if (!ce(curr, epos))
-	msg(JSTR("警告：この階の通路がつながっていません。", "Warning, connectivity problem on this level."));
+	msg(JSTR("警告：この階の通路接続に問題がある。", "Warning, connectivity problem on this level."));
     return 0;
 }
 

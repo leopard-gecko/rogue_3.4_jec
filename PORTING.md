@@ -8,7 +8,7 @@
 - 他バージョンからは、主に [Rogue 3.6 JEC](https://github.com/leopard-gecko/rogue_3.6_jec) の日本語訳・Unicode表示・現代的な端末処理を参考にしました。5.2・5.4 JECは主に巻き物名の長さ制限や画面表示の照合先です。
 - **ゲームルールは3.4を基準とする**方針です。後のバージョンの品物・怪物・罠・ゲームルールを移植するものではありません。原典由来であっても、明白な未定義動作や破綻する処理は安全性のため修正しています。
 - 英語の通常ゲームメッセージは原典の文言を基本とし、明らかな誤字・不完全な文章やOS対応上必要な案内を修正します。日本語は3.6 JECの訳語・文体を可能な範囲で共通化します。
-- 原典付属の `src/rogue.doc`、`src/rogue.6`、`src/rogue.cat`、`src/rogue.r` は歴史的資料として**変更せず保存**しています。当時のセーブ・スコアの説明は現行移植版とは異なります。
+- `src/rogue.6` と `src/rogue.cat` は歴史的資料として変更せず保存しています。案内書は `src/rogue_ja.*` と `src/rogue_en.*` のTXT・HTML・Markdown版を収録しています。
 
 ## 2. 配布ファイルの構成
 
@@ -547,3 +547,26 @@ Artifactsからダウンロードでき、Releaseへの公開は自動で行い�
   第6-C段階のWindows実機・GitHub Actionsでの動作確認を維持するため、
   リファクタリングはビルドの重複解消とコメント・文書の整理に限定しました。
 
+
+## Windows distribution guides (2026-11-25)
+
+`make dist.win` now includes `rogue_ja.txt`, `rogue_ja.html`,
+`rogue_en.txt` and `rogue_en.html` alongside the two EXEs, two READMEs
+and `LICENSE.txt` under `Rogue 3.4/`. Markdown editions remain in the
+source distribution. GitHub Actions checks the exact nine-file payload
+and compares the four included guides against their source files.
+No game logic, build flags or save/score formats were changed.
+
+
+## Windows distribution: single-executable package (2026-11-25)
+
+`make dist.win` now includes only `rogue34.exe` (automatic startup
+language), two Windows READMEs, four TXT/HTML guides adapted for Windows,
+and `LICENSE.txt` under `Rogue 3.4/` (eight files total).
+`rogue34_original.exe` is no longer built or included by `dist.win`.
+The earlier stage 6-B/6-C descriptions above are historical records.
+
+The standalone `make original`/`make english` target remains available to
+verify original-style English startup without shipping a separate EXE.
+GitHub Actions checks the eight-file ZIP and tests both language settings
+using the one packaged executable. No gameplay or save-format changes.

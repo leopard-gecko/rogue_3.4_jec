@@ -999,8 +999,8 @@ save_game(void)
             mpos = 0;
             save_display_path(display, sizeof display, dest,
                               ROGUE_COLS - 2 - rogue_text_width(
-                                  JSTR("ファイル名：", "File name: ")));
-            msg(JSTR("ファイル名：%s", "File name: %s"), display);
+                                  JSTR("ファイル名： ", "File name: ")));
+            msg(JSTR("ファイル名： %s", "File name: %s"), display);
             rogue_visual_delay(ROGUE_TEXT_NOTICE_DELAY_MS);
             return TRUE;
         }
