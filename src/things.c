@@ -344,7 +344,7 @@ add_pack(void)
      */
     if (inpack == MAXPACK)
     {
-	msg(JSTR("これ以上持ちものを運べない。", "You can't carry anything else."));
+	msg(JSTR("もうこれ以上、物は持てない。", "You can't carry anything else."));
 	return 0;
     }
     if ((item = find_obj(hero.y, hero.x)) == NULL)
@@ -844,7 +844,7 @@ picky_inven(void)
 		msg("%c) %s",ch,inv_name((struct object *) ldata(item), FALSE));
 		return 0;
 	    }
-	msg(JSTR("'%s'は持ちものにありません。", "'%s' not in pack"), rogue_unctrl(mch));
+	msg(JSTR("'%s'は持っていない。", "'%s' not in pack"), rogue_unctrl(mch));
     }
     return 0;
 }

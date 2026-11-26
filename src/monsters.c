@@ -163,6 +163,6 @@ wanderer(void)
     tp->t_pos = cp;
     tp->t_dest = &hero;
     if (wizard)
-        msg(JSTR("%sがさまよい始めた。", "Started a wandering %s"), jrogue_text(monsters[tp->t_type-'A'].m_name));
+        msg(JSTR("%sがさまよい始めた", "Started a wandering %s"), jrogue_text(monsters[tp->t_type-'A'].m_name));
     return 0;
 }

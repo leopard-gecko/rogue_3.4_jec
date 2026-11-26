@@ -187,7 +187,7 @@ attack(struct thing *mp)
 		    if (terse)
 			msg(JSTR("あなたは身動きできない。", "You are transfixed."));
 		    else
-			msg(JSTR("浮遊する目の視線に釘付けになり、身動きできない。", "You are transfixed by the gaze of the floating eye."));
+			msg(JSTR("あなたは身動きできない。浮遊する目の視線に捕らえられた。", "You are transfixed by the gaze of the floating eye."));
 		}
 		no_command += rnd(2)+2;
 	    when 'A':
