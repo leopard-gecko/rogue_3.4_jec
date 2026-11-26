@@ -445,6 +445,9 @@ read_scroll(void)
 		for (mi = mlist; mi != NULL; mi = next(mi))
 		{
 		    register struct thing *mtp = (struct thing *) ldata(mi);
+		    /* A newly awakened monster needs a valid chase target.
+		       The original only set ISRUN, leaving t_dest NULL. */
+		    mtp->t_dest = &hero;
 		    mtp->t_flags |= ISRUN;
 		}
 	    }
