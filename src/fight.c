@@ -95,7 +95,11 @@ fight(coord *mp, char mn, struct object *weap, bool thrown)
 		{
 		    register struct room *rp;
 
-		    if ((rp = roomin(mp))->r_goldval == 0)
+		    /* A leprechaun can be killed outside a room. */
+		    rp = roomin(mp);
+		    if (rp == NULL)
+			break;
+		    if (rp->r_goldval == 0)
 		    {
 			rp->r_gold = *mp;
 		    }
