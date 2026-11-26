@@ -28,6 +28,23 @@ SAVEDIR ?= $(if $(strip $(FILEDIR)),$(FILEDIR),.)
 SCOREDIR ?= $(if $(strip $(FILEDIR)),$(FILEDIR),.)
 DEFAULT_LANGUAGE ?= 0
 
+# Keep ordinary `make` compatible with the historical executable name.
+# Installation defaults to rogue34 so other Rogue versions can coexist.
+# An explicit PROG= or PROGRAM= also selects the installation name.
+ifeq ($(origin PROG),command line)
+INSTALL_PROG ?= $(PROG)
+else ifeq ($(origin PROGRAM),command line)
+INSTALL_PROG ?= $(PROG)
+else
+INSTALL_PROG ?= rogue34
+endif
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+MANDIR ?= $(PREFIX)/share/man
+DOCDIR ?= $(PREFIX)/share/doc/$(INSTALL_PROG)
+DESTDIR ?=
+INSTALL ?= install
+
 # Keep C11 and warnings even when callers override CFLAGS.
 PORT_CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wmissing-prototypes
 UNAME_S := $(shell uname -s)
@@ -52,7 +69,7 @@ include Makefile.sources
 SRCS = $(GAME_SRCS)
 OBJS = $(SRCS:.c=.o)
 
-.PHONY: all clean original english japanese FORCE_BUILD_OPTIONS
+.PHONY: all clean original english japanese install uninstall FORCE_BUILD_OPTIONS
 all: $(PROG)
 $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
@@ -85,5 +102,40 @@ original english:
 japanese:
 	$(MAKE) clean PROG="$(PROG)"
 	$(MAKE) all PROG="$(PROG)" DEFAULT_LANGUAGE=1
+
+# The source `rogue.6` and its preformatted counterpart `rogue.cat`
+# are both installed. The cat page uses the traditional cat6/*.0 name.
+# Only explicitly configured absolute data directories are created;
+# relative and ~/ paths belong to the invoking player, not to sudo.
+install:
+	$(MAKE) all PROG="$(INSTALL_PROG)"
+	$(INSTALL) -d "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(MANDIR)/man6" \
+	  "$(DESTDIR)$(MANDIR)/cat6" "$(DESTDIR)$(DOCDIR)"
+	@for d in "$(SAVEDIR)" "$(SCOREDIR)"; do \
+	  case "$$d" in \
+	    ''|.) ;; \
+	    /*) $(INSTALL) -d "$(DESTDIR)$$d" ;; \
+	    *) echo "Not creating relative or home-based save directory: $$d" ;; \
+	  esac; \
+	done
+	$(INSTALL) -m 0755 "$(INSTALL_PROG)" "$(DESTDIR)$(BINDIR)/$(INSTALL_PROG)"
+	$(INSTALL) -m 0644 rogue.6 "$(DESTDIR)$(MANDIR)/man6/$(INSTALL_PROG).6"
+	$(INSTALL) -m 0644 rogue.cat "$(DESTDIR)$(MANDIR)/cat6/$(INSTALL_PROG).0"
+	@for f in rogue_ja.txt rogue_ja.html rogue_ja.md \
+	          rogue_en.txt rogue_en.html rogue_en.md; do \
+	  $(INSTALL) -m 0644 "$$f" "$(DESTDIR)$(DOCDIR)/$$f" || exit 1; \
+	done
+	$(INSTALL) -m 0644 ../README.md ../README_ja.md ../LICENSE "$(DESTDIR)$(DOCDIR)/"
+
+uninstall:
+	rm -f "$(DESTDIR)$(BINDIR)/$(INSTALL_PROG)" \
+	  "$(DESTDIR)$(MANDIR)/man6/$(INSTALL_PROG).6" \
+	  "$(DESTDIR)$(MANDIR)/cat6/$(INSTALL_PROG).0"
+	@for f in rogue_ja.txt rogue_ja.html rogue_ja.md \
+	          rogue_en.txt rogue_en.html rogue_en.md \
+	          README.md README_ja.md LICENSE; do \
+	  rm -f "$(DESTDIR)$(DOCDIR)/$$f" || exit 1; \
+	done
+	-rmdir "$(DESTDIR)$(DOCDIR)" 2>/dev/null || true
 
 endif # Windows versus Unix

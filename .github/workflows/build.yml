@@ -47,6 +47,34 @@ jobs:
           make clean
           make
 
+      - name: Verify install/uninstall and manual pages
+        working-directory: src
+        run: |
+          stage="$RUNNER_TEMP/rogue34-install-check"
+          mkdir -p "$stage"
+          make install DESTDIR="$stage"
+          test -x "$stage/usr/local/bin/rogue34"
+          test -s "$stage/usr/local/share/man/man6/rogue34.6"
+          test -s "$stage/usr/local/share/man/cat6/rogue34.0"
+          for lang in ja en; do
+            for ext in txt html md; do
+              test -s "$stage/usr/local/share/doc/rogue34/rogue_${lang}.${ext}"
+            done
+          done
+          test -s "$stage/usr/local/share/doc/rogue34/LICENSE"
+          make uninstall DESTDIR="$stage"
+          test ! -e "$stage/usr/local/bin/rogue34"
+          test ! -e "$stage/usr/local/share/man/man6/rogue34.6"
+          test ! -e "$stage/usr/local/share/man/cat6/rogue34.0"
+          # Explicit names and absolute data directories are supported.
+          make install PROGRAM=rogue34qa FILEDIR=/var/lib/rogue34qa DESTDIR="$stage"
+          test -x "$stage/usr/local/bin/rogue34qa"
+          test -d "$stage/var/lib/rogue34qa"
+          printf 'saved data\n' > "$stage/var/lib/rogue34qa/rogue34qa.save"
+          make uninstall PROGRAM=rogue34qa DESTDIR="$stage"
+          test ! -e "$stage/usr/local/bin/rogue34qa"
+          test -f "$stage/var/lib/rogue34qa/rogue34qa.save"
+
       - name: Package executable and documentation
         run: |
           mkdir -p dist
@@ -170,23 +198,25 @@ jobs:
         run: |
           archive=rogue34_jec_windows.zip
           unzip -tq "$archive"
-          # One directory plus exactly five files; no accidental build output.
+          # One directory plus exactly eight files; no accidental build output.
           count="$(unzip -Z1 "$archive" | wc -l | tr -d '[:space:]')"
-          test "$count" -eq 6
+          test "$count" -eq 9
           for member in \
             'Rogue 3.4/' \
             'Rogue 3.4/rogue34.exe' \
-            'Rogue 3.4/rogue34_original.exe' \
             'Rogue 3.4/README_ja.txt' \
             'Rogue 3.4/README_en.txt' \
+            'Rogue 3.4/rogue_ja.txt' \
+            'Rogue 3.4/rogue_ja.html' \
+            'Rogue 3.4/rogue_en.txt' \
+            'Rogue 3.4/rogue_en.html' \
             'Rogue 3.4/LICENSE.txt'; do
             unzip -Z1 "$archive" | grep -Fx -- "$member" > /dev/null
           done
           mkdir -p package-check
           unzip -q "$archive" -d package-check
-          for exe in \
-            'package-check/Rogue 3.4/rogue34.exe' \
-            'package-check/Rogue 3.4/rogue34_original.exe'; do
+          test ! -e 'package-check/Rogue 3.4/rogue34_original.exe'
+          for exe in 'package-check/Rogue 3.4/rogue34.exe'; do
             test -s "$exe"
             objdump -f "$exe" | grep -F 'pei-x86-64'
             # These must not require external MSYS2/PDCurses runtime DLLs.
@@ -198,34 +228,46 @@ jobs:
           done
           test -s 'package-check/Rogue 3.4/README_ja.txt'
           test -s 'package-check/Rogue 3.4/README_en.txt'
+          # Guides inside the Windows ZIP use Windows-specific command examples;
+          # the canonical source guides must remain unmodified.
+          for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do
+            test -s "package-check/Rogue 3.4/$guide"
+            sed -f windows/guide_windows.sed "$guide" |
+              cmp - "package-check/Rogue 3.4/$guide"
+            if cmp -s "$guide" "package-check/Rogue 3.4/$guide"; then
+              echo "Windows guide was not adapted: $guide" >&2
+              exit 1
+            fi
+          done
+          for guide in rogue_ja.txt rogue_ja.html rogue_en.txt rogue_en.html; do
+            grep -Fq '.\rogue34.exe save_file' "package-check/Rogue 3.4/$guide"
+            grep -Fq '.\rogue34.exe -r' "package-check/Rogue 3.4/$guide"
+            grep -Fq 'rogue34.save' "package-check/Rogue 3.4/$guide"
+          done
+          grep -Fq '% rogue save_file' rogue_ja.txt
+          grep -Fq '% rogue save_file' rogue_en.txt
           cmp 'package-check/Rogue 3.4/LICENSE.txt' ../LICENSE
 
-      - name: Smoke check both packaged language variants and shared score filename
+      - name: Smoke check packaged language selection and score filename
         working-directory: src
         run: |
           mkdir -p package-check/smoke
           cd package-check/smoke
           printf 'ROGUE34-SCORES-1\n100 1 2 0 546573746572\n' > rogue34.scr
-          # Auto language responds to locale; original is English by default.
+          # Auto language responds to locale; ROGUEOPTS can override it.
           env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \
             '../Rogue 3.4/rogue34.exe' -s > normal-ja.out
           grep -F 'トップ10の冒険者' normal-ja.out
           grep -F 'Tester' normal-ja.out
-          env -u ROGUEOPTS LC_ALL=ja_JP.UTF-8 LANG=ja_JP.UTF-8 \
-            '../Rogue 3.4/rogue34_original.exe' -s > original-en.out
-          grep -F 'Top Ten Adventurers' original-en.out
-          grep -F 'Tester' original-en.out
-          # ROGUEOPTS still overrides either compiled startup default.
+          # The single packaged executable supports both languages.
           env ROGUEOPTS=language=en LC_ALL=ja_JP.UTF-8 \
             '../Rogue 3.4/rogue34.exe' -s > overridden-en.out
           grep -F 'Top Ten Adventurers' overridden-en.out
           env ROGUEOPTS=language=ja LC_ALL=en_US.UTF-8 \
-            '../Rogue 3.4/rogue34_original.exe' -s > overridden-ja.out
+            '../Rogue 3.4/rogue34.exe' -s > overridden-ja.out
           grep -F 'トップ10の冒険者' overridden-ja.out
           test ! -e rogue.scr
-          test ! -e rogue34_original.scr
           test ! -e rogue34.save
-          test ! -e rogue34_original.save
 
       - name: Upload Windows distribution ZIP
         uses: actions/upload-artifact@v7
