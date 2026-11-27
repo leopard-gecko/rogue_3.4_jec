@@ -1,5 +1,6 @@
 Rogue 3.4 JEC for Windows
 =========================
+Distribution number: 003
 
 Rogue 3.4 JEC is a Japanese-localized, modern Windows port based on a
 reconstruction of the 1981 Berkeley Rogue 3.4 sources. It is not the

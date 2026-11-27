@@ -1,5 +1,7 @@
 # Rogue 3.4 JEC — macOS / Linux / Windows 移植版
 
+**Rogue 3.4 JEC 003**
+
 本プロジェクトは、1981年のBerkeley版Rogue 3.4を復元したソースコードを、現代のC11コンパイラと端末環境で動作するように移植したものです。
 
 [English README](README.md)

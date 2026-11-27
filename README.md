@@ -1,5 +1,7 @@
 # Rogue 3.4 JEC — macOS / Linux / Windows port
 
+**Rogue 3.4 JEC 003**
+
 This project adapts the reconstructed 1981 Berkeley Rogue 3.4 source for
 modern C11 compilers and terminal-based systems.
 

@@ -33,6 +33,9 @@ typedef struct optstruct	OPTION;
 static void put_lang(void *value);
 static int get_lang(void *value, WINDOW *win);
 static void option_redraw(void);
+/* Keep only the two language-dependent default fruit names in sync.
+ * User-supplied names are never translated or overwritten. */
+static void sync_default_fruit(void);
 #define OPT_REDRAW 3
 
 
@@ -217,6 +220,25 @@ get_bool(void *value, WINDOW *win)
 }
 
 static void
+sync_default_fruit(void)
+{
+    const char *default_fruit;
+
+    /* Match Rogue 3.6 JEC: either spelling of the built-in default
+     * follows the current language, including after loading a save.
+     * Any other fruit name is a user choice and must remain untouched. */
+    if (fruit[0] != '\0' &&
+        strcmp(fruit, "slime-mold") != 0 &&
+        strcmp(fruit, "ネバネバかび") != 0)
+        return;
+
+    default_fruit = JSTR("ネバネバかび", "slime-mold");
+    if (strcmp(fruit, default_fruit) != 0)
+        rogue_copy_option(fruit, sizeof fruit,
+                          default_fruit, strlen(default_fruit));
+}
+
+static void
 put_lang(void *value)
 {
     (void)value;
@@ -250,6 +272,7 @@ get_lang(void *value, WINDOW *win)
         option_key_hint(win, oy, ox, 15,
                         JSTR("［日本語(J)、英語(E)］", "(J or E)"));
     }
+    sync_default_fruit();
     return old != jrogue_lang_is_japanese ? OPT_REDRAW : NORM;
 }
 
@@ -549,6 +572,9 @@ parse_opts(char *str)
         }
         token = end;
     }
+    /* Finalize after all ROGUEOPTS tokens: fruit= and language= can
+     * appear in either order, and a custom fruit must survive both. */
+    sync_default_fruit();
     return 0;
 }
 
