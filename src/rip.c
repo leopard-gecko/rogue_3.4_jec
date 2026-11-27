@@ -308,6 +308,27 @@ score_store(FILE *fp, struct score_entry entries[SCORE_COUNT])
     return 0;
 }
 
+/*
+ * Print game-over scores on a clean normal terminal screen after endwin().
+ * The standalone -s command never clears an existing terminal screen, and
+ * redirected Unix output must not contain terminal control sequences.
+ * Windows retains its direct-launch-only console clearing implementation.
+ */
+static void
+score_clear_plain_screen(int flags)
+{
+    if (flags == -1)
+        return;
+#ifdef _WIN32
+    rogue_windows_clear_direct_launch_screen();
+#else
+    if (isatty(fileno(stdout))) {
+        fputs("\033[0m\033[H\033[2J", stdout);
+        fflush(stdout);
+    }
+#endif
+}
+
 int
 score(int amount, int flags, char monst)
 {
@@ -384,12 +405,9 @@ score(int amount, int flags, char monst)
     else if (fd >= 0) close(fd);
 #endif
 
-    /* All callers have already ended curses (or have never started it for
-       -s). Direct Windows launches must not print the scoreboard over the
-       dungeon or earlier console output after endwin(). */
-#ifdef _WIN32
-    rogue_windows_clear_direct_launch_screen();
-#endif
+    /* All callers have already ended curses (or have not started it for -s).
+       Clear the ordinary terminal screen before printing the scoreboard. */
+    score_clear_plain_screen(flags);
     if (!valid) {
         fprintf(stderr, "\nCannot read or update the Rogue 3.4 scores at %s.\n"
                 "The file was left unchanged if its format is unknown.\n", path);
